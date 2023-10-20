@@ -1,12 +1,17 @@
 import express from "express";
 import { db } from "./firebase.js";
 import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import {
   doc,
   addDoc,
   collection,
   getDocs,
   updateDoc,
-  deleteDoc
+  deleteDoc,
 } from "firebase/firestore";
 
 const app = express();
@@ -57,13 +62,13 @@ router.put("/:id", async (request, response) => {
 });
 
 //delete data
-router.delete("/:id", async (request,response) => {
+router.delete("/:id", async (request, response) => {
   const id = request.params;
-try{
-  const result  = await deleteDoc(doc(db, "coursework", `${id.id}`));
-  console.log(result);
-  return response.status(200).send("successfully delete")
-}catch (error) {
+  try {
+    const result = await deleteDoc(doc(db, "coursework", `${id.id}`));
+    console.log(result);
+    return response.status(200).send("successfully delete");
+  } catch (error) {
     return response.status(500).send(`ERROR !?   ${error}`);
   }
 });
@@ -109,3 +114,5 @@ router.get("/", async (request, response) => {
 });
 
 export default router;
+
+
