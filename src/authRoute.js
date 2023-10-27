@@ -4,6 +4,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { initializeApp } from 'firebase-admin/app';
+
 
 const app = express();
 const router = express.Router();
@@ -43,7 +45,10 @@ router.post("/signup", async (request, response) => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        return response.status(200).send("Successfully signed in");
+        
+          return response.status(200).send(user);
+        
+        
       })
       .catch((error) => {
         const errorCode = error.code;
