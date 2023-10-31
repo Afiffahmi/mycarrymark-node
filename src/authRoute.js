@@ -45,7 +45,6 @@ router.post("/signup", async (request, response) => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        
           return response.status(200).send(user);
         
         
@@ -53,7 +52,7 @@ router.post("/signup", async (request, response) => {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        return response.status(500).send(`${error.message}`);
+        return response.status(500).send(error.message);
       });
   });
 
