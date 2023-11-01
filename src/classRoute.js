@@ -26,9 +26,20 @@ router.post("/", async (request, response) => {
     const docRef = await addDoc(collection(db, "coursework"), {
       test1: request.body.test1,
       test2: request.body.test2,
-    });
+    }
+    );
 
-    return response.status(201).send("successfully created");
+    
+
+    if(docRef){
+        const lecRef = await addDoc(collection(db,`coursework/${docRef._key.path.segments[1]}/lecturer`),{
+            email: "hafiz@gmail.com"
+        })
+    }
+
+    
+
+    return response.status(201).send(docRef);
   } catch (error) {
     return response.status(500).send(`${error}`);
   }
@@ -73,9 +84,9 @@ router.get("/:id", async (request, response) => {
   let carrymarks = [];
   const id = request.params;
   try {
-    const querySnapshot = await getDocs(collection(db, "coursework"));
+    const querySnapshot = await getDocs(collection(db, "/class/E4BUUVwIIYICW3zJTr1Q/lecturer/"));
     querySnapshot.forEach((doc) => {
-      console.log(`${doc.id} = ${id.id}`);
+      console.log(`${doc.email} = ${id.email}`);
       if (doc.id === id.id) {
         carrymarks.push({
           id: doc.id,
@@ -94,7 +105,7 @@ router.get("/:id", async (request, response) => {
 router.get("/", async (request, response) => {
   let carrymarks = [];
   try {
-    const querySnapshot = await getDocs(collection(db, "coursework"));
+    const querySnapshot = await getDocs(collection(db, "class"));
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
       carrymarks.push({
