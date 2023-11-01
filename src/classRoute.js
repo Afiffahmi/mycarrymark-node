@@ -15,7 +15,7 @@ app.search(express.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//Create
+//Create Class
 router.post("/", async (request, response) => {
   try {
     if (!request.body.test1 || !request.body.test2) {
@@ -23,22 +23,19 @@ router.post("/", async (request, response) => {
         message: "send all the required field",
       });
     }
-    const docRef = await addDoc(collection(db, "coursework"), {
-      test1: request.body.test1,
-      test2: request.body.test2,
+    const docRef = await addDoc(collection(db, "class"), {
+      courseCode: request.body.coursecode,
+      courseName: request.body.coursename,
+      groupClass: request.body.groupclass,
+      part: request.body.part,
+      nStudent: 0
     }
     );
-
-    
-
     if(docRef){
-        const lecRef = await addDoc(collection(db,`coursework/${docRef._key.path.segments[1]}/lecturer`),{
-            email: "hafiz@gmail.com"
+        const lecRef = await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/lecturer`),{
+            email: request.body.email,
         })
     }
-
-    
-
     return response.status(201).send(docRef);
   } catch (error) {
     return response.status(500).send(`${error}`);
