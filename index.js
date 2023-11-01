@@ -15,6 +15,13 @@ app.use("/carrymark", mcmRoute);
 app.use("/auth", authRoute);
 app.use("/class",classRoute);
 
+app.get("/", (request, response) => {
+  return response.status(200).send(`<head><link rel="shortcut icon" href="#"></head>`);
+});
+
+app.get('*', (req, res) => {
+  res.send('404 Page Not Found');
+});
 
 app.listen(port, () => {
   console.log(`we re listening on port ${port}`);
