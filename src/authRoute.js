@@ -4,8 +4,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { initializeApp } from 'firebase-admin/app';
-
 
 const app = express();
 const router = express.Router();
