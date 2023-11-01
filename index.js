@@ -23,7 +23,7 @@ app.listen(port, () => {
   console.log(`we re listening on port ${port}`);
 });
 
-export default app
+export default app;
 
 
 
