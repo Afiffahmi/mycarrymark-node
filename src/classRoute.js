@@ -16,9 +16,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //Create Class
-router.post("/", async (request, response) => {
+router.post("/new", async (request, response) => {
   try {
-    if (!request.body.test1 || !request.body.test2) {
+    if (!request.body.coursecode || !request.body.coursename || !request.body.part || !request.body.group || !request.body.email ) {
       return response.status(400).send({
         message: "send all the required field",
       });
@@ -26,7 +26,7 @@ router.post("/", async (request, response) => {
     const docRef = await addDoc(collection(db, "class"), {
       courseCode: request.body.coursecode,
       courseName: request.body.coursename,
-      groupClass: request.body.groupclass,
+      groupClass: request.body.group,
       part: request.body.part,
       nStudent: 0
     }
