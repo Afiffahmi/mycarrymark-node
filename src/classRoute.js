@@ -1,4 +1,4 @@
-import express from "express";
+import express, { request, response } from "express";
 import { db } from "./firebase.js";
 import {
   doc,
@@ -7,6 +7,7 @@ import {
   getDocs,
   updateDoc,
   deleteDoc,
+  onSnapshot
 } from "firebase/firestore";
 
 const app = express();
@@ -42,6 +43,59 @@ router.post("/new", async (request, response) => {
   }
 });
 
+// View class
+router.get("/list", async (request, response) => {
+  try {
+    const classlist = [];
+    const querySnapshot = await getDocs(collection(db, "class"));
+    for (let doc of querySnapshot.docs) {
+      let classData = {
+        id: doc.id,
+        ...doc.data(),
+      };
+
+      const lecturerSnapshot = await getDocs(collection(db, `class/${doc.id}/lecturer`));
+      let lecturers = [];
+      lecturerSnapshot.forEach((lecDoc) => {
+        lecturers.push({
+          id: lecDoc.id,
+          ...lecDoc.data(),
+        });
+      });
+
+      classData.lecturers = lecturers;
+      classlist.push(classData);
+    }
+    return response.status(200).send(classlist);
+  } catch (error) {
+    return response.status(500).send(`${error}`);
+  }
+});
+
+//update class
+router.put("/update/:id", async (request, response) => {
+  try {
+    if (!request.body.coursecode || !request.body.coursename || !request.body.part || !request.body.group) {
+      return response.status(400).send({
+        message: "send all the required field",
+      });
+    }
+    const id = request.params;
+    const classRef = doc(db, "class", `${id.id}`);
+
+    await updateDoc(classRef, {
+      courseCode: request.body.coursecode,
+      courseName: request.body.coursename,
+      groupClass: request.body.group,
+      part: request.body.part,
+    });
+
+    return response.status(200).send("successfully updated");
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+});
+
 //Update
 router.put("/:id", async (request, response) => {
   try {
@@ -64,57 +118,6 @@ router.put("/:id", async (request, response) => {
   }
 });
 
-//delete data
-router.delete("/:id", async (request, response) => {
-  const id = request.params;
-  try {
-    const result = await deleteDoc(doc(db, "coursework", `${id.id}`));
-    console.log(result);
-    return response.status(200).send("successfully delete");
-  } catch (error) {
-    return response.status(500).send(`ERROR !?   ${error}`);
-  }
-});
-
-//read single data
-router.get("/:id", async (request, response) => {
-  let carrymarks = [];
-  const id = request.params;
-  try {
-    const querySnapshot = await getDocs(collection(db, "/class/E4BUUVwIIYICW3zJTr1Q/lecturer/"));
-    querySnapshot.forEach((doc) => {
-      console.log(`${doc.email} = ${id.email}`);
-      if (doc.id === id.id) {
-        carrymarks.push({
-          id: doc.id,
-          ...doc.data(),
-        });
-        return response.status(200).send(carrymarks);
-      }
-    });
-    return response.status(500).send("not found");
-  } catch (error) {
-    return response.status(500).send(`ERROR !?   ${error}`);
-  }
-});
-
-//Read All
-router.get("/", async (request, response) => {
-  let carrymarks = [];
-  try {
-    const querySnapshot = await getDocs(collection(db, "class"));
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      carrymarks.push({
-        id: doc.id,
-        ...doc.data(),
-      });
-    });
-    return response.status(200).send(carrymarks);
-  } catch (error) {
-    return response.status(500).send(`${error}`);
-  }
-});
 
 export default router;
 
