@@ -72,6 +72,34 @@ router.get("/list", async (request, response) => {
   }
 });
 
+//get class by id
+router.get("/:id", async (request, response) => {
+  try {
+    const id = request.params;
+    const classRef = doc(db, "class", `${id.id}`);
+    const classSnapshot = await getDocs(classRef);
+    let classData = {
+      id: classSnapshot.id,
+      ...classSnapshot.data(),
+    };
+
+    const lecturerSnapshot = await getDocs(collection(db, `class/${id.id}/lecturer`));
+    let lecturers = [];
+    lecturerSnapshot.forEach((lecDoc) => {
+      lecturers.push({
+        id: lecDoc.id,
+        ...lecDoc.data(),
+      });
+    });
+
+    classData.lecturers = lecturers;
+
+    return response.status(200).send(classData);
+  } catch (error) {
+    return response.status(500).send(`${error}`);
+  }
+})
+
 //update class
 router.put("/update/:id", async (request, response) => {
   try {
