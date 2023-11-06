@@ -7,7 +7,8 @@ import {
   getDocs,
   updateDoc,
   deleteDoc,
-  onSnapshot
+  onSnapshot,
+  getDoc
 } from "firebase/firestore";
 
 const app = express();
@@ -75,15 +76,15 @@ router.get("/list", async (request, response) => {
 //get class by id
 router.get("/:id", async (request, response) => {
   try {
-    const id = request.params;
-    const classRef = doc(db, "class", `${id.id}`);
-    const classSnapshot = await getDocs(classRef);
+    const id = request.params.id; // fix: get the id from the request params
+    const classRef = doc(db, `class/${id}`); // fix: use the correct document reference
+    const classSnapshot = await getDoc(classRef); // fix: use getDoc instead of getDocs
     let classData = {
       id: classSnapshot.id,
       ...classSnapshot.data(),
     };
 
-    const lecturerSnapshot = await getDocs(collection(db, `class/${id.id}/lecturer`));
+    const lecturerSnapshot = await getDocs(collection(db, `class/${id}/lecturer`));
     let lecturers = [];
     lecturerSnapshot.forEach((lecDoc) => {
       lecturers.push({
