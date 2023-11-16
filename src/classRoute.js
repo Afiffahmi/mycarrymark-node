@@ -76,10 +76,13 @@ router.get("/list", async (request, response) => {
 //get class by id
 router.get("/:id", async (request, response) => {
   try {
-    const id = request.params.id; // fix: get the id from the request params
-    const classRef = doc(db, `class/${id}`); // fix: use the correct document reference
-    const classSnapshot = await getDoc(classRef); // fix: use getDoc instead of getDocs
+    const id = request.params.id;
+    const classRef = doc(db, `class/${id}`); 
+    const classSnapshot = await getDoc(classRef); 
+    const shortId  = classSnapshot.id.slice(0,5) ;
+
     let classData = {
+      shortId: shortId,
       id: classSnapshot.id,
       ...classSnapshot.data(),
     };
@@ -146,6 +149,20 @@ router.put("/:id", async (request, response) => {
     return response.status(500).send(`ERROR !?   ${error}`);
   }
 });
+
+//setup coursework partition
+router.post("/setup", async (request, response) => {
+  try{
+    const classId = request.body.classId;
+    const courseworkRef =  await addDoc(collection(db,`class/${classId}/coursework`),{
+      coursework: request.body.coursework,
+  })
+    return response.status(200).send("successfully updated");
+  }catch(e)
+  {
+    return response.status(500).send(e)
+  }
+})
 
 
 export default router;
