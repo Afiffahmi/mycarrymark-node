@@ -179,13 +179,33 @@ router.post("/:id/setup", async (request, response) => {
     const courseworkRef =  await addDoc(collection(db,`class/${classId}/coursework`),{
       coursework: request.body.coursework,
   })
-    return response.status(200).send({message: "successfully setup coursework"});
+    return response.status(200).send({message: "successfully setup coursework",
+     code : 200 });
   }catch(e)
   {
     return response.status(500).send({message: e});
   }
 })
 
+//get coursework partition
+
+router.get("/:id/coursework", async (request, response) => {
+  try{
+    const classId = request.params.id;
+    const courseworkSnapshot = await getDocs(collection(db, `class/${classId}/coursework`));
+    let coursework = [];
+    courseworkSnapshot.forEach((cwDoc) => {
+      coursework.push({
+        id: cwDoc.id,
+        ...cwDoc.data(),
+      });
+    });
+    return response.status(200).send(coursework);
+  }catch(e)
+  {
+    return response.status(500).send({message: e});
+  }
+})
 
 export default router;
 
