@@ -108,6 +108,24 @@ router.get("/:id", async (request, response) => {
   }
 })
 
+//get student list
+router.get("/:id/student", async (request, response) => {
+  try {
+    const id = request.params.id;
+    const studentSnapshot = await getDocs(collection(db, `class/${id}/student`));
+    let students = [];
+    studentSnapshot.forEach((studDoc) => {
+      students.push({
+        id: studDoc.id,
+        ...studDoc.data(),
+      });
+    });
+    return response.status(200).send(students);
+  } catch (error) {
+    return response.status(500).send(`${error}`);
+  }
+})
+
 //update class
 router.put("/update/:id", async (request, response) => {
   try {
@@ -155,16 +173,16 @@ router.put("/:id", async (request, response) => {
 });
 
 //setup coursework partition
-router.post("/setup", async (request, response) => {
+router.post("/:id/setup", async (request, response) => {
   try{
-    const classId = request.body.classId;
+    const classId = request.params.id;
     const courseworkRef =  await addDoc(collection(db,`class/${classId}/coursework`),{
       coursework: request.body.coursework,
   })
-    return response.status(200).send("successfully updated");
+    return response.status(200).send({message: "successfully setup coursework"});
   }catch(e)
   {
-    return response.status(500).send(e)
+    return response.status(500).send({message: e});
   }
 })
 
