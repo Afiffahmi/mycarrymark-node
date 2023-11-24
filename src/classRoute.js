@@ -207,6 +207,75 @@ router.get("/:id/coursework", async (request, response) => {
   }
 })
 
+router.post("/:id/forum", async (request, response) => {
+  try{
+    const classId = request.params.id;
+    const forumRef =  await addDoc(collection(db,`class/${classId}/forum`),{
+      sender: request.body.email,
+      title: request.body.title,
+  })
+
+  if(forumRef){
+    const commentRef = await addDoc(collection(db,`class/${classId}/forum/${forumRef._key.path.segments[3]}/messages`),{
+      sender: request.body.email,
+      content: request.body.content,
+      timestap: new Date().getTime(),
+    })
+
+    const usersRef = await addDoc(collection(db,`class/${classId}/forum/${forumRef._key.path.segments[3]}/users`),{
+      name: request.body.email,
+      username: request.body.email,
+      avatar: "",
+      online: false,
+    })
+  }
+    return response.status(200).send({message: "successfully setup forum",
+     code : 200 });
+  }catch(e)
+  {
+    return response.status(500).send({message: e});
+  }
+})
+
+router.get("/:id/forum", async (request, response) => {
+  try {
+    const classId = request.params.id;
+
+    // Get the forum data
+    const forumSnapshot = await getDocs(collection(db, `class/${classId}/forum`));
+    let forum = {};
+    const forumData = forumSnapshot.docs.map(doc => {
+      forum = {
+        id: doc.id,
+        ...doc.data(),
+      };
+      
+    }
+    
+    
+    );
+    
+    const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
+    let messages = [];
+    const messageData = messageSnapshot.docs.map(doc => {
+      messages.push({
+  
+          id: doc.id,
+          ...doc.data(),
+        
+      });
+    });
+
+    let finalforum = [];
+
+    finalforum.push({id:forum.id,sender:forum.sender,title:forum.title, messages: messages })
+
+    return response.status(200).send(finalforum);
+  } catch (e) {
+    return response.status(500).send({message: e});
+  }
+});
+
 export default router;
 
 
