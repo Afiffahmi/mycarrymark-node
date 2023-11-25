@@ -286,7 +286,40 @@ router.get("/:id/forum", async (request, response) => {
       messages : finalforum
     }
 
-    return response.status(200).send(fullforum);
+    return response.status(200).send(finalforum);
+  } catch (e) {
+    return response.status(500).send({message: e});
+  }
+});
+
+router.get("/:id/users", async (request, response) => {
+  try {
+    const classId = request.params.id;
+
+    // Get the forum data
+    const forumSnapshot = await getDocs(collection(db, `class/${classId}/forum`));
+    let forum = {};
+    const forumData = forumSnapshot.docs.map(doc => {
+      forum = {
+        id: doc.id,
+        ...doc.data(),
+      };
+      
+    }
+    );
+    
+    const userSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/users`));
+    let users= [];
+    const usersData = userSnapshot.docs.map(doc => {
+      users.push({
+        id: doc.id,
+          ...doc.data()
+      })
+    });
+
+
+
+    return response.status(200).send(users);
   } catch (e) {
     return response.status(500).send({message: e});
   }
