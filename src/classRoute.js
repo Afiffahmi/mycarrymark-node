@@ -251,8 +251,6 @@ router.get("/:id/forum", async (request, response) => {
       };
       
     }
-    
-    
     );
     
     const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
@@ -268,13 +266,32 @@ router.get("/:id/forum", async (request, response) => {
 
     let finalforum = [];
 
+    const userSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/users`));
+    let users= {};
+    const usersData = userSnapshot.docs.map(doc => {
+      users = {
+  
+          id: doc.id,
+          ...doc.data(),
+        
+      };
+    });
+
+
+
     finalforum.push({id:forum.id,sender:forum.sender,title:forum.title, messages: messages })
 
-    return response.status(200).send(finalforum);
+    const fullforum = {
+      users : users,
+      messages : finalforum
+    }
+
+    return response.status(200).send(fullforum);
   } catch (e) {
     return response.status(500).send({message: e});
   }
 });
+
 
 export default router;
 
