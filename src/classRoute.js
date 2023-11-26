@@ -325,6 +325,108 @@ router.get("/:id/users", async (request, response) => {
   }
 });
 
+//create classwork 
+router.post("/:id/classwork", async (request, response) => {
+  try{
+    const classId = request.params.id;
+    const classworkRef =  await addDoc(collection(db,`class/${classId}/classwork`),{
+      title: request.body.title,
+      description: request.body.description,
+      dueDate: request.body.dueDate,
+      maxMark: request.body.maxMark,
+      type: request.body.type,
+      status: "open",
+      submitted: 0,
+  })
+    return response.status(200).send({message: "successfully setup classwork",
+     code : 200 });
+  }catch(e)
+  {
+    return response.status(500).send({message: e});
+  }
+})
+
+//create material
+router.post("/:id/material", async (request, response) => {
+  try{
+    const classId = request.params.id;
+    const materialRef =  await addDoc(collection(db,`class/${classId}/material`),{
+      title: request.body.title,
+      description: request.body.description,
+      link: request.body.link,
+  })
+    return response.status(200).send({message: "successfully setup material",
+     code : 200 });
+  }catch(e)
+  {
+    return response.status(500).send({message: e});
+  }
+})
+
+//update classwork
+router.put("/:id/classwork/:classworkId", async (request, response) => {
+  try {
+    if (!request.body.title || !request.body.description || !request.body.dueDate || !request.body.maxMark || !request.body.type || !request.body.status) {
+      return response.status(400).send({
+        message: "send all the required field",
+      });
+    }
+    const id = request.params;
+    const classworkRef = doc(db, `class/${id.id}/classwork/${id.classworkId}`);
+
+    await updateDoc(classworkRef, {
+      title: request.body.title,
+      description: request.body.description,
+      dueDate: request.body.dueDate,
+      maxMark: request.body.maxMark,
+      type: request.body.type,
+      status: request.body.status,
+    });
+
+    return response.status(200).send("successfully updated");
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+});
+
+//update material
+router.put("/:id/material/:materialId", async (request, response) => {
+  try {
+    if (!request.body.title || !request.body.description || !request.body.link) {
+      return response.status(400).send({
+        message: "send all the required field",
+      });
+    }
+    const id = request.params;
+    const materialRef = doc(db, `class/${id.id}/material/${id.materialId}`);
+
+    await updateDoc(materialRef, {
+      title: request.body.title,
+      description: request.body.description,
+      link: request.body.link,
+    });
+
+    return response.status(200).send("successfully updated");
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+});
+
+//delete classwork
+router.delete("/:id/classwork/:classworkId", async (request, response) => {
+  try {
+    const id = request.params;
+    const classworkRef = doc(db, `class/${id.id}/classwork/${id.classworkId}`);
+    await deleteDoc(classworkRef);
+    return response.status(200).send("successfully deleted");
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+}
+);
+
+
+
 
 export default router;
 
