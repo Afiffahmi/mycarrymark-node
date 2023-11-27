@@ -95,7 +95,7 @@ router.post("/signup", async (request, response) => {
         downloadURL : downloadURL
       })
     }catch(e){
-      return res.status(400).send(error.message);
+      return res.status(500).send(e);
     }
   })
 
