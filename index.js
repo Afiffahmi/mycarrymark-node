@@ -40,10 +40,6 @@ app.use((req,res,next)=>{
   next(new createHttpError.NotFound());
 })
 
-app.use((err,req,res,next)=>{
-  res.status(err.status || 500);
-  res.render('error.html',{err})
-})
 
 app.listen(port, () => {
   console.log(`we re listening on port ${port}`);
