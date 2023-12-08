@@ -24,6 +24,7 @@ app.use(favicon(path.join(__dirname,'public','favicon.ico')))
 app.use("/carrymark", mcmRoute);
 app.use("/auth", authRoute);
 app.use("/class",classRoute);
+app.use(express.static('public'))
 
 app.engine('html',ejs.renderFile);
 
