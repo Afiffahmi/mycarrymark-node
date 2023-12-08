@@ -8,6 +8,7 @@ import {fileURLToPath} from 'url';
 import ejs from 'ejs';
 import favicon from 'serve-favicon'
 import createHttpError from "http-errors";
+import {v4} from 'uuid';
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -25,6 +26,18 @@ app.use("/auth", authRoute);
 app.use("/class",classRoute);
 
 app.engine('html',ejs.renderFile);
+
+app.get('/api', (req, res) => {
+  const path = `/api/item/${v4()}`;
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
+  res.end(`Hello! Go to item: <a href="${path}">${path}</a>`);
+});
+
+app.get('/api/item/:slug', (req, res) => {
+  const { slug } = req.params;
+  res.end(`Item: ${slug}`);
+});
 
 app.get("/", (request, response) => {
   response.render('index.html')
