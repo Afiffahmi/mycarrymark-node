@@ -427,22 +427,29 @@ router.delete("/:id/classwork/:classworkId", async (request, response) => {
 
 //create student 
 router.post("/:id/student", async (request, response) => {
-  try{
+  try {
     const classId = request.params.id;
-    const studentRef =  await addDoc(collection(db,`class/${classId}/student`),{
+    const studentRef = await addDoc(collection(db, `class/${classId}/student`), {
       email: request.body.email,
       name: request.body.name,
       studentid: request.body.studentid,
       avatar: request.body.avatar,
       online: false,
-  })
-    return response.status(200).send({message: "successfully setup student",
-     code : 200 });
-  }catch(e)
-  {
-    return response.status(500).send({message: e});
+    });
+
+    const classRef = doc(db, `class/${classId}`);
+    await updateDoc(classRef, {
+      nStudent: increment(1),
+    });
+
+    return response.status(200).send({
+      message: "successfully setup student",
+      code: 200,
+    });
+  } catch (e) {
+    return response.status(500).send({ message: e });
   }
-})
+});
 
 //update student
 router.put("/:id/student/:studentId", async (request, response) => {
