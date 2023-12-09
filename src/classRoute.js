@@ -425,6 +425,65 @@ router.delete("/:id/classwork/:classworkId", async (request, response) => {
 }
 );
 
+//create student 
+router.post("/:id/student", async (request, response) => {
+  try{
+    const classId = request.params.id;
+    const studentRef =  await addDoc(collection(db,`class/${classId}/student`),{
+      email: request.body.email,
+      name: request.body.name,
+      username: request.body.username,
+      avatar: request.body.avatar,
+      online: false,
+  })
+    return response.status(200).send({message: "successfully setup student",
+     code : 200 });
+  }catch(e)
+  {
+    return response.status(500).send({message: e});
+  }
+})
+
+//update student
+router.put("/:id/student/:studentId", async (request, response) => {
+  try {
+    if (!request.body.email || !request.body.name || !request.body.username || !request.body.avatar || !request.body.online) {
+      return response.status(400).send({
+        message: "send all the required field",
+      });
+    }
+    const id = request.params;
+    const studentRef = doc(db, `class/${id.id}/student/${id.studentId}`);
+
+    await updateDoc(studentRef, {
+      email: request.body.email,
+      name: request.body.name,
+      username: request.body.username,
+      avatar: request.body.avatar,
+      online: request.body.online,
+    });
+
+    return response.status(200).send("successfully updated");
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+});
+
+//delete student
+router.delete("/:id/student/:studentId", async (request, response) => {
+  try {
+    const id = request.params;
+    const studentRef = doc(db, `class/${id.id}/student/${id.studentId}`);
+    await deleteDoc(studentRef);
+    return response.status(200).send("successfully deleted");
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+}
+);
+
+
+
 
 
 
