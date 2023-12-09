@@ -8,7 +8,8 @@ import {
   updateDoc,
   deleteDoc,
   onSnapshot,
-  getDoc
+  getDoc,
+  runTransaction,
 } from "firebase/firestore";
 
 const app = express();
@@ -438,8 +439,10 @@ router.post("/:id/student", async (request, response) => {
     });
 
     const classRef = doc(db, `class/${classId}`);
-    await updateDoc(classRef, {
-      nStudent: increment(1),
+    await runTransaction(db, async (transaction) => {
+      const classDoc = await transaction.get(classRef);
+      const nStudent = classDoc.data().nStudent || 0;
+      transaction.update(classRef, { nStudent: nStudent + 1 });
     });
 
     return response.status(200).send({
