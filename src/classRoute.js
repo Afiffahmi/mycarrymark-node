@@ -432,7 +432,7 @@ router.post("/:id/student", async (request, response) => {
     const studentRef =  await addDoc(collection(db,`class/${classId}/student`),{
       email: request.body.email,
       name: request.body.name,
-      username: request.body.username,
+      studentid: request.body.studentid,
       avatar: request.body.avatar,
       online: false,
   })
@@ -458,7 +458,7 @@ router.put("/:id/student/:studentId", async (request, response) => {
     await updateDoc(studentRef, {
       email: request.body.email,
       name: request.body.name,
-      username: request.body.username,
+      studentid: request.body.studentid,
       avatar: request.body.avatar,
       online: request.body.online,
     });
