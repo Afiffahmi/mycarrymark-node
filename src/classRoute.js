@@ -151,27 +151,7 @@ router.put("/update/:id", async (request, response) => {
   }
 });
 
-//Update
-router.put("/:id", async (request, response) => {
-  try {
-    if (!request.body.test1 || !request.body.test2) {
-      return response.status(400).send({
-        message: "send all the required field",
-      });
-    }
-    const id = request.params;
-    const mcmRef = doc(db, "coursework", `${id.id}`);
 
-    await updateDoc(mcmRef, {
-      test1: request.body.test1,
-      test2: request.body.test2,
-    });
-
-    return response.status(200).send("successfully updated");
-  } catch (error) {
-    return response.status(500).send(`ERROR !?   ${error}`);
-  }
-});
 
 //setup coursework partition
 router.post("/:id/setup", async (request, response) => {
