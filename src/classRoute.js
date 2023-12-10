@@ -234,7 +234,7 @@ router.post("/:id/forum", async (request, response) => {
 router.get("/:id/forum", async (request, response) => {
   try {
     const classId = request.params.id;
-    let finalforum = [];
+
     // Get the forum data
     const forumSnapshot = await getDocs(collection(db, `class/${classId}/forum`));
     let forum = {};
@@ -243,10 +243,8 @@ router.get("/:id/forum", async (request, response) => {
         id: doc.id,
         ...doc.data(),
       };
-      finalforum.push({id:forum.id,sender:forum.sender,title:forum.title })
+      
     }
-
-    
     );
     
     const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
@@ -258,10 +256,29 @@ router.get("/:id/forum", async (request, response) => {
           ...doc.data(),
         
       });
-      finalforum.push({messages:messages})
     });
 
+    let finalforum = [];
+
+    const userSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/users`));
+    let users= {};
+    const usersData = userSnapshot.docs.map(doc => {
+      users = {
   
+          id: doc.id,
+          ...doc.data(),
+        
+      };
+    });
+
+
+
+    finalforum.push({id:forum.id,sender:forum.sender,title:forum.title, messages: messages })
+
+    const fullforum = {
+      users : users,
+      messages : finalforum
+    }
 
     return response.status(200).send(finalforum);
   } catch (e) {
