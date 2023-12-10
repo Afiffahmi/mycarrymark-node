@@ -237,26 +237,32 @@ router.get("/:id/forum", async (request, response) => {
 
     // Get the forum data
     const forumSnapshot = await getDocs(collection(db, `class/${classId}/forum`));
-    let forum = {};
-    const forumData = forumSnapshot.docs.map(doc => {
-      forum = {
-        id: doc.id,
-        ...doc.data(),
-      };
-      
-    }
-    );
-    
-    const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
+    let forum = [];
     let messages = [];
+    const forumData = forumSnapshot.docs.map(doc => {
+
+      if(forumData){
+        const messageSnapshot = getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
+    
     const messageData = messageSnapshot.docs.map(doc => {
       messages.push({
   
           id: doc.id,
           ...doc.data(),
-        
       });
     });
+
+      }
+      forum.push({
+        id: doc.id,
+        messages: messages,
+        ...doc.data(),
+      });
+      
+    }
+    );
+    
+    
 
 
 
