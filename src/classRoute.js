@@ -458,7 +458,55 @@ router.delete("/:id/student/:studentId", async (request, response) => {
 }
 );
 
+//view grading
+router.get("/:id/grading", async (request, response) => {
+  try {
 
+    const classId = request.params.id;
+
+    const courseworkSnapshot = await getDoc(doc(db, `class/${classId}/coursework`));
+    if (!courseworkSnapshot.exists()) {
+      return response.status(404).send({ message: "Coursework not found" });
+    }
+
+    const studentSnapshot = await getDoc(doc(db, `class/${classId}/student`));
+    if (!courseworkSnapshot.exists()) {
+      return response.status(404).send({ message: "Coursework not found" });
+    }
+
+    const gradingSnapshot = await getDocs(collection(db, `class/${classId}/grading`));
+    let grading = [];
+    gradingSnapshot.forEach((gradDoc) => {
+      grading.push({
+        id: gradDoc.id,
+        ...gradDoc.data(),
+      });
+    });
+    return response.status(200).send({grading: grading, coursework: courseworkSnapshot.data(), student: studentSnapshot.data()});
+  } catch (error) {
+    return response.status(500).send(`${error}`);
+  }
+})
+
+//post grading
+router.post("/:id/grading", async (request, response) => {
+  try {
+    const classId = request.params.id;
+    const gradingRef = await addDoc(collection(db, `class/${classId}/grading`), {
+      studentid: request.body.studentid,
+      classworkid: request.body.classworkid,
+      mark: request.body.mark,
+      feedback: request.body.feedback,
+    });
+
+    return response.status(200).send({
+      message: "successfully setup grading",
+      code: 200,
+    });
+  } catch (e) {
+    return response.status(500).send({ message: e });
+  }
+})
 
 
 
