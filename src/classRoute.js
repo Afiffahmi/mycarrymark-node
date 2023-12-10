@@ -473,6 +473,23 @@ router.get("/:id/grading", async (request, response) => {
     if (studentSnapshot.empty) {
       return response.status(404).send({ message: "student not found" });
     }
+
+        let coursework = [];
+    courseworkSnapshot.docs.forEach((doc) => {
+      coursework.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+
+    let students = [];
+    studentSnapshot.docs.forEach((doc) => {
+      students.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+
     const gradingSnapshot = await getDocs(collection(db, `class/${classId}/grading`));
     let grading = [];
     gradingSnapshot.forEach((gradDoc) => {
@@ -481,7 +498,7 @@ router.get("/:id/grading", async (request, response) => {
         ...gradDoc.data(),
       });
     });
-    return response.status(200).send({grading: grading, coursework: courseworkSnapshot.data(), student: studentSnapshot.data()});
+    return response.status(200).send({grading: grading, coursework: coursework, student: students});
   } catch (error) {
     return response.status(500).send(`${error}`);
   }
