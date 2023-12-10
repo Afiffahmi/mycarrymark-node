@@ -237,47 +237,40 @@ router.get("/:id/forum", async (request, response) => {
 
     // Get the forum data
     const forumSnapshot = await getDocs(collection(db, `class/${classId}/forum`));
-    let forum = {};
-    const forumData = forumSnapshot.docs.map(doc => {
-      forum = {
+    let forums = [];
+    let finalforum = [];
+
+    for (let doc of forumSnapshot.docs) {
+      let forum = {
         id: doc.id,
         ...doc.data(),
       };
-      
-    }
-    );
-    
-    const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
-    let messages = [];
-    const messageData = messageSnapshot.docs.map(doc => {
-      messages.push({
-  
-          id: doc.id,
-          ...doc.data(),
-        
+
+      const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
+      let messages = [];
+      messageSnapshot.docs.forEach(messageDoc => {
+        messages.push({
+          id: messageDoc.id,
+          ...messageDoc.data(),
+        });
       });
-    });
 
-    let finalforum = [];
+      const userSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/users`));
+      let users = [];
+      userSnapshot.docs.forEach(userDoc => {
+        users.push({
+          id: userDoc.id,
+          ...userDoc.data(),
+        });
+      });
 
-    const userSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/users`));
-    let users= {};
-    const usersData = userSnapshot.docs.map(doc => {
-      users = {
-  
-          id: doc.id,
-          ...doc.data(),
-        
-      };
-    });
-
-
-
-    finalforum.push({id:forum.id,sender:forum.sender,title:forum.title, messages: messages })
-
-    const fullforum = {
-      users : users,
-      messages : finalforum
+      finalforum.push({
+        id: forum.id,
+        sender: forum.sender,
+        title: forum.title,
+        messages: messages,
+        users: users
+      });
     }
 
     return response.status(200).send(finalforum);
