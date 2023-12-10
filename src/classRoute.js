@@ -212,23 +212,16 @@ router.post("/:id/forum", async (request, response) => {
   try{
     const classId = request.params.id;
     const forumRef =  await addDoc(collection(db,`class/${classId}/forum`),{
-      sender: request.body.email,
+
       title: request.body.title,
   })
 
   if(forumRef){
     const commentRef = await addDoc(collection(db,`class/${classId}/forum/${forumRef._key.path.segments[3]}/messages`),{
-      sender: request.body.email,
       content: request.body.content,
       timestap: new Date().getTime(),
     })
 
-    const usersRef = await addDoc(collection(db,`class/${classId}/forum/${forumRef._key.path.segments[3]}/users`),{
-      name: request.body.email,
-      username: request.body.email,
-      avatar: "",
-      online: false,
-    })
   }
     return response.status(200).send({message: "successfully setup forum",
      code : 200 });
