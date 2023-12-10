@@ -238,29 +238,33 @@ router.get("/:id/forum", async (request, response) => {
     // Get the forum data
     const forumSnapshot = await getDocs(collection(db, `class/${classId}/forum`));
     let forum = [];
-    let messages = [];
-    const forumData = forumSnapshot.docs.map(doc => {
 
-      if(forumData){
-        const messageSnapshot = getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
-    
-    const messageData = messageSnapshot.docs.map(doc => {
-      messages.push({
-  
-          id: doc.id,
-          ...doc.data(),
+    for (let doc of forumSnapshot.docs) {
+      let messages = [];
+      const forumId = doc.id;
+
+      // Get the messages data
+      const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forumId}/messages`));
+
+      messageSnapshot.docs.forEach(messageDoc => {
+        messages.push({
+          id: messageDoc.id,
+          ...messageDoc.data(),
+        });
       });
-    });
 
-      }
       forum.push({
-        id: doc.id,
+        id: forumId,
         messages: messages,
         ...doc.data(),
       });
-      
     }
-    );
+
+    response.json(forum);
+  } catch (error) {
+    response.status(500).send(error.message);
+  }
+});
     
     
 
