@@ -469,8 +469,8 @@ router.get("/:id/grading", async (request, response) => {
       return response.status(404).send({ message: "Coursework not found" });
     }
 
-    const studentSnapshot = await getDoc(doc(db, `class/${classId}/student`));
-    if (!studentSnapshot.exists()) {
+    const studentSnapshot = await getDoc(collection(db, `class/${classId}/student`));
+    if (!studentSnapshot.empty) {
       return response.status(404).send({ message: "student not found" });
     }
 
