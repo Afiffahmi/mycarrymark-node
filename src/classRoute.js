@@ -234,43 +234,36 @@ router.post("/:id/forum", async (request, response) => {
 router.get("/:id/forum", async (request, response) => {
   try {
     const classId = request.params.id;
-
+    let finalforum = [];
     // Get the forum data
     const forumSnapshot = await getDocs(collection(db, `class/${classId}/forum`));
-    let forum = [];
-
-    for (let doc of forumSnapshot.docs) {
-      let messages = [];
-      const forumId = doc.id;
-
-      // Get the messages data
-      const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forumId}/messages`));
-
-      messageSnapshot.docs.forEach(messageDoc => {
-        messages.push({
-          id: messageDoc.id,
-          ...messageDoc.data(),
-        });
-      });
-
-      forum.push({
-        id: forumId,
-        messages: messages,
+    let forum = {};
+    const forumData = forumSnapshot.docs.map(doc => {
+      forum = {
+        id: doc.id,
         ...doc.data(),
-      });
+      };
+      finalforum.push({id:forum.id,sender:forum.sender,title:forum.title })
     }
 
-    response.json(forum);
-  } catch (error) {
-    response.status(500).send(error.message);
-  }
-});
     
+    );
     
+    const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
+    let messages = [];
+    const messageData = messageSnapshot.docs.map(doc => {
+      messages.push({
+  
+          id: doc.id,
+          ...doc.data(),
+        
+      });
+      finalforum.push({messages:messages})
+    });
 
+  
 
-
-    return response.status(200).send(forum);
+    return response.status(200).send(finalforum);
   } catch (e) {
     return response.status(500).send({message: e});
   }
