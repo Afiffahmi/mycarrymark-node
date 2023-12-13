@@ -474,7 +474,6 @@ router.get("/:id/grading", async (request, response) => {
       return response.status(404).send({ message: "student not found" });
     }
  
-    
         let coursework = [];
     courseworkSnapshot.docs.forEach((doc) => {
       coursework.push({
