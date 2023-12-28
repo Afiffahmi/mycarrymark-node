@@ -524,7 +524,24 @@ router.post("/:id/grading", async (request, response) => {
   }
 })
 
+//count class 
 
+router.get("/:id/count", async (request, response) => {
+  try {
+    const classlist = [];
+    const querySnapshot = await getDocs(collection(db, "class"));
+    for (let doc of querySnapshot.docs) {
+      let classData = {
+        id: doc.id,
+        ...doc.data(),
+      };
+
+    }
+    return response.status(200).send({count: querySnapshot.size});
+  }catch(e){
+    return response.status(500).send({ message: e });
+  }
+ 
 
 
 export default router;
