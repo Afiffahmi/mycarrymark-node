@@ -8,6 +8,7 @@ import {
 import {storage} from './firebase.js'; 
 import multer from "multer";
 import { getDownloadURL,uploadBytesResumable,ref, getStorage,listAll} from "firebase/storage";
+import path from "path";
 
 const app = express();
 const router = express.Router();
@@ -121,7 +122,8 @@ router.get("/:id/files", async (request, response) => {
         // Fetch download URLs for all items
         const itemPromises = res.items.map(async (itemRef) => {
           const downloadURL = await getDownloadURL(itemRef);
-          results.push({ type: 'item', name: itemRef.name, downloadURL : downloadURL });
+          const fileType = path.extname(itemRef.name);
+          results.push({ type: fileType , name: itemRef.name, downloadURL : downloadURL });
         });
 
         // Wait for all download URLs to be fetched
