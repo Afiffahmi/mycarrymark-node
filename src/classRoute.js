@@ -541,7 +541,7 @@ router.get("/:id/count", async (request, response) => {
   }catch(e){
     return response.status(500).send({ message: e });
   }
- 
+});
 
 
 export default router;
