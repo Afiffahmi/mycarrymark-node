@@ -537,7 +537,7 @@ router.get("/:id/count", async (request, response) => {
       };
 
     }
-    return response.status(200).send({count: querySnapshot.size});
+    return response.status(200).send({count: classlist.length});
   }catch(e){
     return response.status(500).send({ message: e });
   }
