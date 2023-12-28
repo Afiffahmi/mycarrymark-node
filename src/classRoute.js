@@ -476,10 +476,9 @@ router.get("/:id/grading", async (request, response) => {
  
         let coursework = [];
     courseworkSnapshot.docs.forEach((doc) => {
-      coursework.push({
-        id: doc.id,
+      coursework.push([
         ...doc.data(),
-      });
+      ]);
     });
 
     let students = [];
