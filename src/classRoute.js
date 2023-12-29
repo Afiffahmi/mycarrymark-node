@@ -509,10 +509,8 @@ router.post("/:id/grading", async (request, response) => {
   try {
     const classId = request.params.id;
     const gradingRef = await addDoc(collection(db, `class/${classId}/grading`), {
-      studentid: request.body.studentid,
-      classworkid: request.body.classworkid,
-      mark: request.body.mark,
-      feedback: request.body.feedback,
+      studentId: request.body.studentId,
+      grades: request.body.grades,
     });
 
     return response.status(200).send({
