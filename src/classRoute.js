@@ -684,15 +684,12 @@ router.get('/:id/average-grade', async (request, response) => {
         return sum + courseworkWeightedSum;
       }, 0);
 
-      
-
       return { studentId: doc.data().studentId, totalGrade, totalWeighted };
     });
     const averageGrade = (totalGrades / studentGrades.length);
-    const totalWeightedAll = totalWeighted * studentGrades.length;
     
 
-    return response.status(200).send({ averageGrade, totalWeighted,totalWeightedAll });
+    return response.status(200).send({ averageGrade, totalWeighted });
   
   } catch (e) {
     console.error(e); // Log the error to the console
