@@ -509,13 +509,10 @@ router.post("/:id/grading", async (request, response) => {
     const studentId = request.body.studentId;
 
     // Get the grading data for the specific student
-    const gradingSnapshot = await getDocs(query(collection(db, `class/${classId}/grading`), where("studentId", "==", studentId)));
+    const gradingSnapshot = await getDocs(query(doc(db, `class/${classId}`).collection("grading"), where("studentId", "==", studentId)));
 
     if (!gradingSnapshot.empty) {
-      return response.status(400).send({
-        message: "Grading for this student already exists",
-        code: 400,
-      });
+      return response.status(400).send("Grading for this student already exists");
     }
 
     const gradingRef = await addDoc(collection(db, `class/${classId}/grading`), {
@@ -529,6 +526,7 @@ router.post("/:id/grading", async (request, response) => {
     });
   
   } catch (e) {
+    console.error(e); // Log the error to the console
     return response.status(500).send({ message: e });
   }
 });
