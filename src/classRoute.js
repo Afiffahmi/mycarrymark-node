@@ -631,6 +631,12 @@ router.get("/:id/bad-performance", async (request, response) => {
       // Calculate the total weighted grade for the specific student
       const totalWeightedGrade = courseworkSnapshot.docs.reduce((sum, coursework) => {
         const grade = grades.find(grade => grade.assessmentName === coursework.data().assessmentName);
+        
+        // Log the values to check them
+        console.log('grade:', grade);
+        console.log('coursework.data().weighted:', coursework.data().weighted);
+        console.log('grade.grade:', grade ? grade.grade : 'grade not found');
+      
         return sum + (grade ? Number(grade.grade) * Number(coursework.data().weighted) : 0);
       }, 0);
 
