@@ -508,9 +508,18 @@ router.post("/:id/grading", async (request, response) => {
     const classId = request.params.id;
     const studentId = request.body.studentId;
 
-    
+    // Get the grading collection for the specific class
+    const gradingCollection = collection(db, `class/${classId}/grading`);
+    const gradingSnapshot = await getDocs(gradingCollection);
 
-    const gradingRef = await addDoc(collection(db, `class/${classId}/grading`), {
+    // Check if the studentId already exists in the grading documents
+    const gradingExists = gradingSnapshot.docs.some(doc => doc.data().studentId === studentId);
+
+    if (gradingExists) {
+      return response.status(400).send("Grading for this student already exists");
+    }
+
+    const gradingRef = await addDoc(gradingCollection, {
       studentId: studentId,
       grades: request.body.grades,
     });
@@ -525,7 +534,6 @@ router.post("/:id/grading", async (request, response) => {
     return response.status(500).send({ message: e });
   }
 });
-
 
 
 
