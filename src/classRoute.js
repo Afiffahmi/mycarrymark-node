@@ -503,25 +503,35 @@ router.get("/:id/grading", async (request, response) => {
   }
 })
 
-//post grading
 router.post("/:id/grading", async (request, response) => {
   try {
     const classId = request.params.id;
+    const studentId = request.body.studentId;
+
+    // Get the grading data for the specific student
+    const gradingSnapshot = await getDocs(query(collection(db, `class/${classId}/grading`), where("studentId", "==", studentId)));
+
+    if (!gradingSnapshot.empty) {
+      return response.status(400).send({
+        message: "Grading for this student already exists",
+        code: 400,
+      });
+    }
 
     const gradingRef = await addDoc(collection(db, `class/${classId}/grading`), {
-      studentId: request.body.studentId,
+      studentId: studentId,
       grades: request.body.grades,
     });
 
     return response.status(200).send({
-      message: "successfully setup grading",
+      message: "Successfully setup grading",
       code: 200,
     });
   
   } catch (e) {
-    return response.status(500).send({ message: error });
+    return response.status(500).send({ message: e });
   }
-})
+});
 
 
 
