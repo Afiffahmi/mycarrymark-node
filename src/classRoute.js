@@ -606,7 +606,7 @@ router.get("/:id/bad-performance", async (request, response) => {
     const gradingSnapshot = await getDocs(gradingCollection);
 
     // Get the student collection for the specific class
-    const studentCollection = collection(db, `class/${classId}/students`);
+    const studentCollection = collection(db, `class/${classId}/student`);
     const studentSnapshot = await getDocs(studentCollection);
 
     // Calculate the total grade for each student, the worst grade, and the average grade
@@ -619,7 +619,7 @@ router.get("/:id/bad-performance", async (request, response) => {
 
       // Find the student details for the specific student
       const studentDoc = studentSnapshot.docs.find(student => student.data().studentid === doc.data().studentId);
-      const studentName = studentDoc ? studentDoc.data().studentName : "Unknown";
+      const studentName = studentDoc ? studentDoc.data().name : "Unknown";
       const avatar = studentDoc ? studentDoc.data().avatar : "https://cdn3.vectorstock.com/i/1000x1000/51/87/student-avatar-user-profile-icon-vector-47025187.jpg";
 
       return { studentId: doc.data().studentId, studentName, avatar, totalGrade, worstGrade };
