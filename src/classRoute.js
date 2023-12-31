@@ -605,13 +605,14 @@ router.get("/:id/bad-performance", async (request, response) => {
     const gradingCollection = collection(db, `class/${classId}/grading`);
     const gradingSnapshot = await getDocs(gradingCollection);
 
-    // Calculate the total grade for each student and the average grade
+    // Calculate the total grade for each student, the worst grade, and the average grade
     let totalGrades = 0;
     const studentGrades = gradingSnapshot.docs.map(doc => {
       const grades = doc.data().grades;
       const totalGrade = grades.reduce((sum, grade) => sum + Number(grade.grade), 0);
+      const worstGrade = Math.min(...grades.map(grade => Number(grade.grade)));
       totalGrades += totalGrade;
-      return { studentId: doc.data().studentId, totalGrade };
+      return { studentId: doc.data().studentId, studentName: doc.data().studentName, totalGrade, worstGrade };
     });
     const averageGrade = totalGrades / studentGrades.length;
 
