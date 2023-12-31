@@ -570,7 +570,7 @@ router.put("/:id/grading", async (request, response) => {
   }
 });
 
-router.get("/class/:id/grading/:studentId", async (request, response) => {
+router.get("/:id/grading/:studentId", async (request, response) => {
   try {
     const classId = request.params.id;
     const studentId = request.params.studentId;
