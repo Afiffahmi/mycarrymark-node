@@ -658,7 +658,7 @@ router.get("/:id/bad-performance", async (request, response) => {
 });
 
 //Average Student Grade
-router.get(':id/average-grade', async (request, response) => {
+router.get('/:id/average-grade', async (request, response) => {
   try {
     const classId = request.params.id;
     // Get the grading collection
