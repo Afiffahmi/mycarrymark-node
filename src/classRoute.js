@@ -618,9 +618,9 @@ router.get("/:id/bad-performance", async (request, response) => {
       totalGrades += totalGrade;
 
       // Find the student details for the specific student
-      const studentDoc = studentSnapshot.docs.find(student => student.data().studentId === doc.data().studentId);
+      const studentDoc = studentSnapshot.docs.find(student => student.data().studentid === doc.data().studentId);
       const studentName = studentDoc ? studentDoc.data().studentName : "Unknown";
-      const avatar = studentDoc ? studentDoc.data().avatar : "Unknown";
+      const avatar = studentDoc ? studentDoc.data().avatar : "https://cdn3.vectorstock.com/i/1000x1000/51/87/student-avatar-user-profile-icon-vector-47025187.jpg";
 
       return { studentId: doc.data().studentId, studentName, avatar, totalGrade, worstGrade };
     });
