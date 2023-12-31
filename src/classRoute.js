@@ -688,7 +688,7 @@ router.get('/:id/average-grade', async (request, response) => {
       return { studentId: doc.data().studentId, totalGrade, totalWeighted };
     });
     const averageGrade = (totalGrades / studentGrades.length);
-    const totalWeightedAll = totalWeightedGrades * studentGrades.length;
+    const totalWeightedAll = totalWeighted * studentGrades.length;
     const performanceRating = (totalGrades / totalWeightedAll) * 10;
 
 
