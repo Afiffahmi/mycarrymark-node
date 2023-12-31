@@ -657,6 +657,32 @@ router.get("/:id/bad-performance", async (request, response) => {
   }
 });
 
+//Average Student Grade
+router.get(':id/average-grade', async (request, response) => {
+  try {
+    const classId = request.params.id;
+    // Get the grading collection
+    const gradingCollection = collection(db, `class/${classId}/grading`);
+    const gradingSnapshot = await getDocs(gradingCollection);
+
+    // Calculate the total grade for each student and the average grade
+    let totalGrades = 0;
+    const studentGrades = gradingSnapshot.docs.map(doc => {
+      const grades = doc.data().grades;
+      const totalGrade = grades.reduce((sum, grade) => sum + Number(grade.grade), 0);
+      totalGrades += totalGrade;
+      return { studentId: doc.data().studentId, totalGrade };
+    });
+    const averageGrade = totalGrades / studentGrades.length;
+
+    return response.status(200).send({ averageGrade });
+  
+  } catch (e) {
+    console.error(e); // Log the error to the console
+    return response.status(500).send({ message: e });
+  }
+});
+
 export default router;
 
 
