@@ -638,7 +638,7 @@ router.get("/:id/bad-performance", async (request, response) => {
       const studentName = studentDoc ? studentDoc.data().name : "Unknown";
       const avatar = studentDoc ? studentDoc.data().avatar : "https://cdn3.vectorstock.com/i/1000x1000/51/87/student-avatar-user-profile-icon-vector-47025187.jpg";
 
-      return { studentId: doc.data().studentId, studentName, avatar, totalGrade, worstGrade, worstAssessmentName, totalWeightedGrade };
+      return { studentId: doc.data().studentId, studentName, avatar, totalGrade, worstGrade, worstAssessmentName, totalWeighted };
     });
     const averageGrade = totalGrades / studentGrades.length;
 
