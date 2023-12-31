@@ -570,6 +570,32 @@ router.put("/:id/grading", async (request, response) => {
   }
 });
 
+router.get("/class/:id/grading/:studentId", async (request, response) => {
+  try {
+    const classId = request.params.id;
+    const studentId = request.params.studentId;
+
+    // Get the grading collection for the specific class
+    const gradingCollection = collection(db, `class/${classId}/grading`);
+    const gradingSnapshot = await getDocs(gradingCollection);
+
+    // Find the grading document for the specific student
+    const gradingDoc = gradingSnapshot.docs.find(doc => doc.data().studentId === studentId);
+
+    if (gradingDoc) {
+      // If the grading document exists, send it as the response
+      return response.status(200).send(gradingDoc.data());
+    } else {
+      // If the grading document doesn't exist, send a 404 response
+      return response.status(404).send({message:"Grading for this student does not exist"});
+    }
+  
+  } catch (e) {
+    console.error(e); // Log the error to the console
+    return response.status(500).send({ message: e });
+  }
+});
+
 
 export default router;
 
