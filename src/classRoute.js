@@ -597,32 +597,49 @@ router.get("/:id/grading/:studentId", async (request, response) => {
 });
 
 //bad-performance-student
+//bad-performance-student
 router.get("/:id/bad-performance", async (request, response) => {
   try {
     const classId = request.params.id;
 
-    // Get the grading collection for the specific class
+    // Get the grading, student, and coursework collections for the specific class
     const gradingCollection = collection(db, `class/${classId}/grading`);
     const gradingSnapshot = await getDocs(gradingCollection);
-
-    // Get the student collection for the specific class
     const studentCollection = collection(db, `class/${classId}/student`);
     const studentSnapshot = await getDocs(studentCollection);
+    const courseworkCollection = collection(db, `class/${classId}/coursework`);
+    const courseworkSnapshot = await getDocs(courseworkCollection);
 
-    // Calculate the total grade for each student, the worst grade, and the average grade
+    // Calculate the total grade, the worst grade, the total weighted grade, and the average grade
     let totalGrades = 0;
     const studentGrades = gradingSnapshot.docs.map(doc => {
       const grades = doc.data().grades;
       const totalGrade = grades.reduce((sum, grade) => sum + Number(grade.grade), 0);
-      const worstGrade = Math.min(...grades.map(grade => Number(grade.grade)));
+      
+      // Calculate the worst grade and its corresponding assessment name
+      let worstGrade = Number.MAX_SAFE_INTEGER;
+      let worstAssessmentName = '';
+      grades.forEach(grade => {
+        if (Number(grade.grade) < worstGrade) {
+          worstGrade = Number(grade.grade);
+          worstAssessmentName = grade.assessmentName;
+        }
+      });
+
       totalGrades += totalGrade;
+
+      // Calculate the total weighted grade for the specific student
+      const totalWeightedGrade = courseworkSnapshot.docs.reduce((sum, coursework) => {
+        const grade = grades.find(grade => grade.courseworkId === coursework.data().courseworkId);
+        return sum + (grade ? Number(grade.grade) * Number(coursework.data().weight) : 0);
+      }, 0);
 
       // Find the student details for the specific student
       const studentDoc = studentSnapshot.docs.find(student => student.data().studentid === doc.data().studentId);
       const studentName = studentDoc ? studentDoc.data().name : "Unknown";
       const avatar = studentDoc ? studentDoc.data().avatar : "https://cdn3.vectorstock.com/i/1000x1000/51/87/student-avatar-user-profile-icon-vector-47025187.jpg";
 
-      return { studentId: doc.data().studentId, studentName, avatar, totalGrade, worstGrade };
+      return { studentId: doc.data().studentId, studentName, avatar, totalGrade, worstGrade, worstAssessmentName, totalWeightedGrade };
     });
     const averageGrade = totalGrades / studentGrades.length;
 
