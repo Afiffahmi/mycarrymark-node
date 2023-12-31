@@ -516,7 +516,7 @@ router.post("/:id/grading", async (request, response) => {
     const gradingExists = gradingSnapshot.docs.some(doc => doc.data().studentId === studentId);
 
     if (gradingExists) {
-      return response.status(400).send("Grading for this student already exists");
+      return response.status(400).send({message:"Grading for this student already exists"});
     }
 
     const gradingRef = await addDoc(gradingCollection, {
@@ -535,6 +535,40 @@ router.post("/:id/grading", async (request, response) => {
   }
 });
 
+//update grading
+router.put("/:id/grading", async (request, response) => {
+  try {
+    const classId = request.params.id;
+    const studentId = request.body.studentId;
+
+    // Get the grading collection for the specific class
+    const gradingCollection = collection(db, `class/${classId}/grading`);
+    const gradingSnapshot = await getDocs(gradingCollection);
+
+    // Find the grading document for the specific student
+    const gradingDoc = gradingSnapshot.docs.find(doc => doc.data().studentId === studentId);
+
+    if (gradingDoc) {
+      // If the grading document exists, update it with the new grades
+      const gradingRef = doc(db, `class/${classId}/grading`, gradingDoc.id);
+      await updateDoc(gradingRef, {
+        grades: request.body.grades,
+      });
+
+      return response.status(200).send({
+        message: "Successfully updated grading",
+        code: 200,
+      });
+    } else {
+      // If the grading document doesn't exist, send a 400 response
+      return response.status(400).send({message:"Grading for this student does not exist"});
+    }
+  
+  } catch (e) {
+    console.error(e); // Log the error to the console
+    return response.status(500).send({ message: e });
+  }
+});
 
 
 export default router;
