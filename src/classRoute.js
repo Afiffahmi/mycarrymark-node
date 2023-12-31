@@ -676,14 +676,15 @@ router.get('/:id/average-grade', async (request, response) => {
       totalGrades += totalGrade;
 
       // Calculate the total weighted grade
-      const totalWeightedGrade = grades.reduce((sum, grade) => {
-        const courseworkDoc = courseworkSnapshot.docs.find(doc => doc.data().assessmentName === grade.assessmentName);
-        const coursework = courseworkDoc ? courseworkDoc.data().coursework.find(cw => cw.name === grade.assessmentName) : null;
-        return sum + (coursework ? Number(grade.grade) * Number(coursework.weighted) : 0);
+      const totalWeighted = courseworkSnapshot.docs.reduce((sum, courseworkDoc) => {
+        const courseworkArray = courseworkDoc.data().coursework;
+        const courseworkWeightedSum = courseworkArray.reduce((sum, coursework) => {
+          return sum + Number(coursework.weighted);
+        }, 0);
+        return sum + courseworkWeightedSum;
       }, 0);
-      totalWeightedGrades += totalWeightedGrade;
 
-      return { studentId: doc.data().studentId, totalGrade, totalWeightedGrade };
+      return { studentId: doc.data().studentId, totalGrade, totalWeighted };
     });
     const averageGrade = (totalGrades / studentGrades.length);
     const averageWeightedGrade = (totalWeightedGrades / studentGrades.length);
