@@ -508,12 +508,7 @@ router.post("/:id/grading", async (request, response) => {
     const classId = request.params.id;
     const studentId = request.body.studentId;
 
-    // Get the grading data for the specific student
-    const gradingSnapshot = await getDocs(query(doc(db, `class/${classId}`).collection("grading"), where("studentId", "==", studentId)));
-
-    if (!gradingSnapshot.empty) {
-      return response.status(400).send("Grading for this student already exists");
-    }
+    
 
     const gradingRef = await addDoc(collection(db, `class/${classId}/grading`), {
       studentId: studentId,
