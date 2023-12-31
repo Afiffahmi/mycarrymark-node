@@ -633,9 +633,8 @@ router.get("/:id/bad-performance", async (request, response) => {
         const grade = grades.find(grade => grade.assessmentName === coursework.data().assessmentName);
         
         // Log the values to check them
+        console.log('coursework:', coursework.data());
         console.log('grade:', grade);
-        console.log('coursework.data().weighted:', coursework.data().weighted);
-        console.log('grade.grade:', grade ? grade.grade : 'grade not found');
       
         return sum + (grade ? Number(grade.grade) * Number(coursework.data().weighted) : 0);
       }, 0);
