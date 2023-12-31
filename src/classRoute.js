@@ -596,6 +596,35 @@ router.get("/:id/grading/:studentId", async (request, response) => {
   }
 });
 
+//bad-performance-student
+router.get("/:id/bad-performance", async (request, response) => {
+  try {
+    const classId = request.params.id;
+
+    // Get the grading collection for the specific class
+    const gradingCollection = collection(db, `class/${classId}/grading`);
+    const gradingSnapshot = await getDocs(gradingCollection);
+
+    // Calculate the total grade for each student and the average grade
+    let totalGrades = 0;
+    const studentGrades = gradingSnapshot.docs.map(doc => {
+      const grades = doc.data().grades;
+      const totalGrade = grades.reduce((sum, grade) => sum + Number(grade.grade), 0);
+      totalGrades += totalGrade;
+      return { studentId: doc.data().studentId, totalGrade };
+    });
+    const averageGrade = totalGrades / studentGrades.length;
+
+    // Filter out the students whose total grade is below the average
+    const badPerformanceStudents = studentGrades.filter(student => student.totalGrade < averageGrade);
+
+    return response.status(200).send(badPerformanceStudents);
+  
+  } catch (e) {
+    console.error(e); // Log the error to the console
+    return response.status(500).send({ message: e });
+  }
+});
 
 export default router;
 
