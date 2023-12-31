@@ -605,6 +605,10 @@ router.get("/:id/bad-performance", async (request, response) => {
     const gradingCollection = collection(db, `class/${classId}/grading`);
     const gradingSnapshot = await getDocs(gradingCollection);
 
+    // Get the student collection for the specific class
+    const studentCollection = collection(db, `class/${classId}/students`);
+    const studentSnapshot = await getDocs(studentCollection);
+
     // Calculate the total grade for each student, the worst grade, and the average grade
     let totalGrades = 0;
     const studentGrades = gradingSnapshot.docs.map(doc => {
@@ -612,7 +616,13 @@ router.get("/:id/bad-performance", async (request, response) => {
       const totalGrade = grades.reduce((sum, grade) => sum + Number(grade.grade), 0);
       const worstGrade = Math.min(...grades.map(grade => Number(grade.grade)));
       totalGrades += totalGrade;
-      return { studentId: doc.data().studentId, studentName: doc.data().studentName, totalGrade, worstGrade };
+
+      // Find the student details for the specific student
+      const studentDoc = studentSnapshot.docs.find(student => student.data().studentId === doc.data().studentId);
+      const studentName = studentDoc ? studentDoc.data().studentName : "Unknown";
+      const avatar = studentDoc ? studentDoc.data().avatar : "Unknown";
+
+      return { studentId: doc.data().studentId, studentName, avatar, totalGrade, worstGrade };
     });
     const averageGrade = totalGrades / studentGrades.length;
 
