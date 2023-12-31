@@ -511,7 +511,7 @@ router.post("/:id/grading", async (request, response) => {
     if (!gradingSnapshot.empty) {
       // Grading already exists for this student and coursework
       return response.status(400).send({ message: "Grading already filled for this student and coursework" });
-    }
+    }else{
     const gradingRef = await addDoc(collection(db, `class/${classId}/grading`), {
       studentId: request.body.studentId,
       grades: request.body.grades,
@@ -521,8 +521,9 @@ router.post("/:id/grading", async (request, response) => {
       message: "successfully setup grading",
       code: 200,
     });
+  }
   } catch (e) {
-    return response.status(500).send({ message: e });
+    return response.status(500).send({ message: error });
   }
 })
 
