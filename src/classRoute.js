@@ -661,9 +661,11 @@ router.get("/:id/bad-performance", async (request, response) => {
 router.get('/:id/average-grade', async (request, response) => {
   try {
     const classId = request.params.id;
-    // Get the grading collection
+    // Get the grading and coursework collections
     const gradingCollection = collection(db, `class/${classId}/grading`);
     const gradingSnapshot = await getDocs(gradingCollection);
+    const courseworkCollection = collection(db, `class/${classId}/coursework`);
+    const courseworkSnapshot = await getDocs(courseworkCollection);
 
     // Calculate the total grade and total weighted grade for each student and the average grade
     let totalGrades = 0;
@@ -674,7 +676,11 @@ router.get('/:id/average-grade', async (request, response) => {
       totalGrades += totalGrade;
 
       // Calculate the total weighted grade
-      const totalWeightedGrade = grades.reduce((sum, grade) => sum + Number(grade.grade) * Number(grade.weighted), 0);
+      const totalWeightedGrade = grades.reduce((sum, grade) => {
+        const courseworkDoc = courseworkSnapshot.docs.find(doc => doc.data().assessmentName === grade.assessmentName);
+        const coursework = courseworkDoc ? courseworkDoc.data().coursework.find(cw => cw.name === grade.assessmentName) : null;
+        return sum + (coursework ? Number(grade.grade) * Number(coursework.weighted) : 0);
+      }, 0);
       totalWeightedGrades += totalWeightedGrade;
 
       return { studentId: doc.data().studentId, totalGrade, totalWeightedGrade };
@@ -689,7 +695,6 @@ router.get('/:id/average-grade', async (request, response) => {
     return response.status(500).send({ message: e });
   }
 });
-
 
 export default router;
 
