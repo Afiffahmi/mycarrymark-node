@@ -415,11 +415,21 @@ router.delete("/:id/classwork/:classworkId", async (request, response) => {
 router.post("/:id/student", async (request, response) => {
   try {
     const classId = request.params.id;
+    const { email, name, studentid, avatar } = request.body;
+
+    // Check if all required fields are provided
+    if (!email || !name || !studentid || !avatar) {
+      return response.status(400).send({
+        message: "Missing required field(s)",
+        code: 400,
+      });
+    }
+
     const studentRef = await addDoc(collection(db, `class/${classId}/student`), {
-      email: request.body.email,
-      name: request.body.name,
-      studentid: request.body.studentid,
-      avatar: request.body.avatar,
+      email,
+      name,
+      studentid,
+      avatar,
       online: false,
     });
 
