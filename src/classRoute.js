@@ -211,6 +211,24 @@ router.post("/:id/forum", async (request, response) => {
   }
 })
 
+//add new messages
+router.post("/:id/forum/:forumId/messages", async (request, response) => {
+  try {
+    const classId = request.params.id;
+    const forumId = request.params.forumId;
+
+    // Add the new message to the forum
+    const messageRef = await addDoc(collection(db, `class/${classId}/forum/${forumId}/messages`), {
+      content: request.body.content,
+      timestamp: new Date().getTime(),
+    });
+
+    return response.status(200).send({ message: "Message successfully added", code: 200 });
+  } catch (e) {
+    return response.status(500).send({ message: e });
+  }
+});
+
 router.get("/:id/forum", async (request, response) => {
   try {
     const classId = request.params.id;
