@@ -425,22 +425,19 @@ router.post("/:id/student", async (request, response) => {
       });
     }
 
-    const classRef = doc(db, `class/${classId}`);
-    const studentCollection = collection(db, `class/${classId}/student`);
+    const studentRef = await addDoc(collection(db, `class/${classId}/student`), {
+      email,
+      name,
+      studentid,
+      avatar,
+      online: false,
+    });
 
+    const classRef = doc(db, `class/${classId}`);
     await runTransaction(db, async (transaction) => {
       const classDoc = await transaction.get(classRef);
       const nStudent = classDoc.data().nStudent || 0;
       transaction.update(classRef, { nStudent: nStudent + 1 });
-
-      const studentData = {
-        email,
-        name,
-        studentid,
-        avatar,
-        online: false,
-      };
-      transaction.set(doc(studentCollection, studentid), studentData);
     });
 
     return response.status(200).send({
