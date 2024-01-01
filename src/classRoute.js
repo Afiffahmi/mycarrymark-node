@@ -39,9 +39,6 @@ router.post("/new", async (request, response) => {
         const lecRef = await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/lecturer`),{
             email: request.body.email,
         })
-        const studRef = await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/student`),{
-
-        })
 
     }
     return response.status(201).send(docRef);
