@@ -726,6 +726,30 @@ router.get('/:id/average-grade', async (request, response) => {
   }
 });
 
+router.get("/incomplete-grading", async (request, response) => {
+  try {
+    // Get all classes
+    const classCollection = collection(db, `class`);
+    const classSnapshot = await getDocs(classCollection);
+
+    // Filter classes where grading is not complete
+    const incompleteGradingClasses = classSnapshot.docs.filter(async (doc) => {
+      const gradingCollection = collection(db, `class/${doc.id}/grading`);
+      const gradingSnapshot = await getDocs(gradingCollection);
+
+      // Check if there is any grading document where grading is not complete
+      return gradingSnapshot.docs.some(grading => !grading.data().isComplete);
+    });
+
+    // Map to class data
+    const result = incompleteGradingClasses.map(doc => doc.data());
+
+    return response.status(200).send(result);
+  } catch (e) {
+    return response.status(500).send({ message: e });
+  }
+});
+
 export default router;
 
 
