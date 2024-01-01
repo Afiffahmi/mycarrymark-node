@@ -738,11 +738,11 @@ router.get("/incomplete-grading", async (request, response) => {
       const gradingSnapshot = await getDocs(gradingCollection);
 
       // Check if there is any grading document where grading is not complete
-      return gradingSnapshot.docs.some(grading => grading.data().isComplete);
+      return gradingSnapshot.docs.some(grading => !grading.data().isComplete);
     });
 
     // Map to class data
-    const result = incompleteGradingClasses.map(doc => doc.data());
+    const result = incompleteGradingClasses.map(doc => ({ name: doc.data().courseName, id: doc.id, groupClass: doc.data().groupClass,courseCode: doc.data().courseCode }));
 
     return response.status(200).send(result);
   } catch (e) {
