@@ -31,7 +31,8 @@ router.post("/new", async (request, response) => {
       courseName: request.body.coursename,
       groupClass: request.body.group,
       part: request.body.part,
-      nStudent: 0
+      nStudent: 0,
+      selectedImage: request.body.selectedImage,
     }
     );
     if(docRef){
