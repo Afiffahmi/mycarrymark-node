@@ -33,6 +33,7 @@ router.post("/new", async (request, response) => {
       part: request.body.part,
       nStudent: 0,
       selectedImage: request.body.selectedImage,
+      predictive: request.body.predictive,
     }
     );
     if(docRef){
@@ -40,6 +41,33 @@ router.post("/new", async (request, response) => {
             email: request.body.email,
         })
 
+    }
+    if(request.body.predictive == true){
+      const courseworkRef =  await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/coursework`),{
+        assessmentName : "assignment1",
+        score: "100",
+        weighted: "10",
+      })
+      const courseworkRef2 =  await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/coursework`),{
+        assessmentName : "assignment2",
+        score: "100",
+        weighted: "15",
+      })
+      const courseworkRef3 =  await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/coursework`),{
+        assessmentName : "test1",
+        score: "60",
+        weighted: "10",
+      })
+      const courseworkRef4 =  await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/coursework`),{
+        assessmentName : "test2",
+        score: "100",
+        weighted: "10",
+      })
+      const courseworkRef5 =  await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/coursework`),{
+        assessmentName : "quiz1",
+        score: "20",
+        weighted: "5",
+      })
     }
     return response.status(201).send(docRef);
   } catch (error) {
