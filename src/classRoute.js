@@ -807,7 +807,7 @@ router.get("/:id/chart", async (request, response) => {
 
       gradingSnapshot.forEach((gradingDoc) => {
         const gradingData = gradingDoc.data();
-        const studentGrading = studentData.find(grading => grading.studentid === gradingData.grades.studentId);
+        const studentGrading = gradingData.grades.find(grading => grading.studentId === studentData.id);
         studentWeighted.push(studentGrading ? studentGrading.weighted : 0);
       });
 
