@@ -814,13 +814,17 @@ router.get("/:id/chart", async (request, response) => {
           gradingData.grades.forEach((grade) => {
             studentWeighted.push(grade.grade);
           });
+        }else{
+          labels.forEach((label) => {
+            studentWeighted.push(0);
+          });
         }
       });
 
       data.push({
-        studentName: studentData.name,
+        label: studentData.name,
         studentid: studentData.studentid,
-        weighted: studentWeighted,
+        data: studentWeighted,
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)'
       });
