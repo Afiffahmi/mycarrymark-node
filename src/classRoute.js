@@ -787,7 +787,7 @@ router.get("/incomplete-grading", async (request, response) => {
   }
 });
 
-router.get("/:id/grading/chart", async (request, response) => {
+router.get("/:id/chart", async (request, response) => {
   try {
     const classId = request.params.id;
     const gradingSnapshot = await getDocs(collection(db, `class/${classId}/grading`));
