@@ -230,7 +230,7 @@ router.post("/:id/forum", async (request, response) => {
   if(forumRef){
     const commentRef = await addDoc(collection(db,`class/${classId}/forum/${forumRef._key.path.segments[3]}/messages`),{
       content: request.body.content,
-      timestap: new Date().getTime(),
+      timestamp: new Date().getTime(),
     })
 
   }
@@ -782,6 +782,44 @@ router.get("/incomplete-grading", async (request, response) => {
     const result = incompleteGradingClasses.filter(Boolean);
 
     return response.status(200).send(result);
+  } catch (e) {
+    return response.status(500).send({ message: e });
+  }
+});
+
+router.get("/:id/coursework/chart", async (request, response) => {
+  try {
+    const classId = request.params.id;
+    const courseworkSnapshot = await getDocs(collection(db, `class/${classId}/coursework`));
+    const studentSnapshot = await getDocs(collection(db, `class/${classId}/student`));
+
+    let labels = [];
+    let data = [];
+
+    courseworkSnapshot.forEach((cwDoc) => {
+      const courseworkData = cwDoc.data();
+      labels.push(courseworkData.assessmentName);
+    });
+
+    studentSnapshot.forEach((studentDoc) => {
+      const studentData = studentDoc.data();
+      let studentWeighted = [];
+
+      courseworkSnapshot.forEach((cwDoc) => {
+        const courseworkData = cwDoc.data();
+        const studentCoursework = studentData.coursework.find(cw => cw.assessmentName === courseworkData.assessmentName);
+        studentWeighted.push(studentCoursework ? studentCoursework.weighted : 0);
+      });
+
+      data.push({
+        studentName: studentData.name,
+        weighted: studentWeighted,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)'
+      });
+    });
+
+    return response.status(200).send({ labels, data });
   } catch (e) {
     return response.status(500).send({ message: e });
   }
