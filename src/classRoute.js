@@ -44,29 +44,34 @@ router.post("/new", async (request, response) => {
     }
     if(request.body.predictive == true){
       const courseworkRef =  await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/coursework`),{
+        coursework: [{
         assessmentName : "assignment1",
         score: "100",
-        weighted: "10",
+        weighted: "10",}]
       })
       const courseworkRef2 =  await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/coursework`),{
+        coursework: [{
         assessmentName : "assignment2",
         score: "100",
-        weighted: "15",
+        weighted: "15",}],
       })
       const courseworkRef3 =  await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/coursework`),{
+        coursework: [{
         assessmentName : "test1",
         score: "60",
-        weighted: "10",
+        weighted: "10",}]
       })
       const courseworkRef4 =  await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/coursework`),{
+        coursework: [{
         assessmentName : "test2",
         score: "100",
-        weighted: "10",
+        weighted: "10",}]
       })
       const courseworkRef5 =  await addDoc(collection(db,`class/${docRef._key.path.segments[1]}/coursework`),{
+        coursework: [{
         assessmentName : "quiz1",
         score: "20",
-        weighted: "5",
+        weighted: ""}]
       })
     }
     return response.status(201).send(docRef);
