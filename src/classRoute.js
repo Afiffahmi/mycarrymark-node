@@ -811,16 +811,15 @@ router.get("/:id/chart", async (request, response) => {
         const gradingData = gradingDoc.data();
         const studentGrading = gradingData.grades.find(grade => grade.studentId === studentData.studentid);
 
-        console.log('gradingData.grades:', gradingData.grades);
-    console.log('studentData.studentid:', studentData.studentid);
-    console.log('studentGrading:', studentGrading);
-    
-        studentWeighted.push(studentGrading ? studentGrading.weighted : 0);
+        studentWeighted.push(studentGrading ? studentGrading.grades.weighted : 0);
       });
 
       data.push({
         studentName: studentData.name,
+        studentid: studentData.studentid,
         weighted: studentWeighted,
+        carrymark: studentGrading.grades.weighted,
+        studentId: studentGrading.studentId,
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)'
       });
