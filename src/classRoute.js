@@ -71,7 +71,7 @@ router.post("/new", async (request, response) => {
         coursework: [{
         assessmentName : "quiz1",
         score: "20",
-        weighted: ""}]
+        weighted: "5"}]
       })
     }
     return response.status(201).send(docRef);
