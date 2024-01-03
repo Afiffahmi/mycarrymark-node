@@ -787,28 +787,28 @@ router.get("/incomplete-grading", async (request, response) => {
   }
 });
 
-router.get("/:id/coursework/chart", async (request, response) => {
+router.get("/:id/grading/chart", async (request, response) => {
   try {
     const classId = request.params.id;
-    const courseworkSnapshot = await getDocs(collection(db, `class/${classId}/coursework`));
+    const gradingSnapshot = await getDocs(collection(db, `class/${classId}/grading`));
     const studentSnapshot = await getDocs(collection(db, `class/${classId}/student`));
 
     let labels = [];
     let data = [];
 
-    courseworkSnapshot.forEach((cwDoc) => {
-      const courseworkData = cwDoc.data();
-      labels.push(courseworkData.assessmentName);
+    gradingSnapshot.forEach((gradingDoc) => {
+      const gradingData = gradingDoc.data();
+      labels.push(gradingData.grades.assessmentName);
     });
 
     studentSnapshot.forEach((studentDoc) => {
       const studentData = studentDoc.data();
       let studentWeighted = [];
 
-      courseworkSnapshot.forEach((cwDoc) => {
-        const courseworkData = cwDoc.data();
-        const studentCoursework = studentData.coursework.find(cw => cw.assessmentName === courseworkData.assessmentName);
-        studentWeighted.push(studentCoursework ? studentCoursework.weighted : 0);
+      gradingSnapshot.forEach((gradingDoc) => {
+        const gradingData = gradingDoc.data();
+        const studentGrading = studentData.grading.find(grading => grading.assessmentName === gradingData.grades.assessmentName);
+        studentWeighted.push(studentGrading ? studentGrading.weighted : 0);
       });
 
       data.push({
