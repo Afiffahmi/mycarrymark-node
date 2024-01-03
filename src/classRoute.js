@@ -830,7 +830,7 @@ router.get("/:id/chart", async (request, response) => {
       });
     });
 
-    return response.status(200).send({ labels, data });
+    return response.status(200).send({ labels, datasets });
   } catch (e) {
     return response.status(500).send({ message: e.message });
   }
