@@ -810,11 +810,10 @@ router.get("/:id/chart", async (request, response) => {
       gradingSnapshot.forEach((gradingDoc) => {
         const gradingData = gradingDoc.data();
         const studentGrading = (gradingData.studentId === studentData.studentid);
-        if (studentGrading && studentGrading.grades) {
-          const grades = studentGrading.grades.map(gradeObj => gradeObj.grade);
-          studentWeighted.push(...grades);
-        } else {
-          studentWeighted.push(0);
+        if (studentGrading) {
+          gradingData.grades.forEach((grade) => {
+            studentWeighted.push(grade.grade);
+          });
         }
       });
 
