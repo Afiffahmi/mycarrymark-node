@@ -806,11 +806,14 @@ router.get("/:id/chart", async (request, response) => {
     studentSnapshot.forEach((studentDoc) => {
       const studentData = studentDoc.data();
       let studentWeighted = [];
+      let studentId = '';
+      let carrymark = '';
 
       gradingSnapshot.forEach((gradingDoc) => {
         const gradingData = gradingDoc.data();
         const studentGrading = gradingData.grades.find(grade => grade.studentId === studentData.studentid);
-
+        studentId = studentGrading.studentId;
+        carrymark = studentGrading.grades.weighted;
         studentWeighted.push(studentGrading ? studentGrading.grades.weighted : 0);
       });
 
@@ -818,8 +821,8 @@ router.get("/:id/chart", async (request, response) => {
         studentName: studentData.name,
         studentid: studentData.studentid,
         weighted: studentWeighted,
-        carrymark: studentGrading.grades.weighted,
-        studentId: studentGrading.studentId,
+        carrymark: carrymark,
+        studentId: studentId,
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)'
       });
