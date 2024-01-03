@@ -808,13 +808,10 @@ router.get("/:id/chart", async (request, response) => {
 
       gradingSnapshot.forEach((gradingDoc) => {
         const gradingData = gradingDoc.data();
-        const studentGrading = gradingData.grades.find(grading => grading.studentId === studentData.id);
+        const studentGrading = gradingData.grades.find(grading => grading.studentId === studentData.studentid);
         studentWeighted.push(studentGrading ? studentGrading.weighted : 0);
       });
 
-      console.log('gradingData.grades:', gradingData.grades);
-      console.log('studentData.id:', studentData.id);
-      console.log('studentGrading:', studentGrading);
 
       data.push({
         studentName: studentData.name,
