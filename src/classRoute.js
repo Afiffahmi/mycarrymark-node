@@ -798,7 +798,9 @@ router.get("/:id/chart", async (request, response) => {
 
     gradingSnapshot.forEach((gradingDoc) => {
       const gradingData = gradingDoc.data();
-      labels.push(gradingData.grades.assessmentName);
+      gradingData.grades.forEach(grade => {
+        labels.push(grade.assessmentName);
+      });
     });
 
     studentSnapshot.forEach((studentDoc) => {
