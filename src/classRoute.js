@@ -794,7 +794,7 @@ router.get("/:id/chart", async (request, response) => {
     const studentSnapshot = await getDocs(collection(db, `class/${classId}/student`));
 
     let labels = [];
-    let data = [];
+    let datasets = [];
 
     if (gradingSnapshot.docs.length > 0) {
       const gradingData = gradingSnapshot.docs[0].data();
@@ -821,7 +821,7 @@ router.get("/:id/chart", async (request, response) => {
         }
       });
 
-      data.push({
+      datasets.push({
         label: studentData.name,
         studentid: studentData.studentid,
         data: studentWeighted,
