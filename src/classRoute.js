@@ -828,8 +828,8 @@ router.get("/:id/chart", async (request, response) => {
         label: studentData.name,
         studentid: studentData.studentid,
         data: studentWeighted,
-        borderColor: getRandomColor(),
-        backgroundColor: getRandomColor() + ', 0.5)'
+        borderColor: getRandomColor() + ', 0.5)',
+        backgroundColor: getRandomColor()
       });
     });
 
