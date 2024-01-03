@@ -814,19 +814,22 @@ router.get("/:id/chart", async (request, response) => {
           gradingData.grades.forEach((grade) => {
             studentWeighted.push(grade.grade);
           });
-        }else{
-          labels.forEach((label) => {
-            studentWeighted.push(0);
-          });
         }
       });
+
+      function getRandomColor() {
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+        return `rgb(${r}, ${g}, ${b})`;
+      }
 
       datasets.push({
         label: studentData.name,
         studentid: studentData.studentid,
         data: studentWeighted,
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)'
+        borderColor: getRandomColor(),
+        backgroundColor: getRandomColor() + ', 0.5)'
       });
     });
 
