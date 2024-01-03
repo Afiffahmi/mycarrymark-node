@@ -807,7 +807,7 @@ router.get("/:id/chart", async (request, response) => {
 
       gradingSnapshot.forEach((gradingDoc) => {
         const gradingData = gradingDoc.data();
-        const studentGrading = studentData.grading.find(grading => grading.assessmentName === gradingData.grades.assessmentName);
+        const studentGrading = studentData.find(grading => grading.studentid === gradingData.grades.studentId);
         studentWeighted.push(studentGrading ? studentGrading.weighted : 0);
       });
 
@@ -821,7 +821,7 @@ router.get("/:id/chart", async (request, response) => {
 
     return response.status(200).send({ labels, data });
   } catch (e) {
-    return response.status(500).send({ message: e });
+    return response.status(500).send({ message: e.message });
   }
 });
 
