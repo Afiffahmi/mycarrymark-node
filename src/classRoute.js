@@ -525,12 +525,12 @@ router.get("/:id/grading", async (request, response) => {
 
     const courseworkSnapshot = await getDocs(collection(db, `class/${classId}/coursework`));
     if (courseworkSnapshot.empty) {
-      return response.status(200).send({ message: "Coursework not found" });
+      return response.status(500).send({ message: "Coursework not found" });
     }
 
     const studentSnapshot = await getDocs(collection(db, `class/${classId}/student`));
     if(studentSnapshot.empty){
-      return response.status(200).send({ message: "student not found" });
+      return response.status(500).send({ message: "student not found" });
     }
         let coursework = [];
     courseworkSnapshot.docs.forEach((doc) => {
