@@ -796,12 +796,12 @@ router.get("/:id/chart", async (request, response) => {
     let labels = [];
     let data = [];
 
-    gradingSnapshot.for((gradingDoc) => {
-      const gradingData = gradingDoc.data();
+    if (gradingSnapshot.docs.length > 0) {
+      const gradingData = gradingSnapshot.docs[0].data();
       gradingData.grades.forEach(grade => {
         labels.push(grade.assessmentName);
       });
-    });
+    }
 
     studentSnapshot.forEach((studentDoc) => {
       const studentData = studentDoc.data();
