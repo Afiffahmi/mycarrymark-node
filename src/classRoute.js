@@ -796,11 +796,12 @@ router.get("/:id/chart", async (request, response) => {
     let labels = [];
     let data = [];
 
-  
+    gradingSnapshot.for((gradingDoc) => {
       const gradingData = gradingDoc.data();
       gradingData.grades.forEach(grade => {
         labels.push(grade.assessmentName);
       });
+    });
 
     studentSnapshot.forEach((studentDoc) => {
       const studentData = studentDoc.data();
@@ -811,7 +812,6 @@ router.get("/:id/chart", async (request, response) => {
         const studentGrading = gradingData.grades.find(grading => grading.studentId === studentData.studentid);
         studentWeighted.push(studentGrading ? studentGrading.weighted : 0);
       });
-
 
       data.push({
         studentName: studentData.name,
