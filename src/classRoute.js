@@ -876,6 +876,48 @@ router.get("/:id/chart", async (request, response) => {
   }
 });
 
+router.get("/bad-performance", async (request, response) => {
+  try {
+    // Get all classes
+    const classSnapshot = await getDocs(collection(db, 'class'));
+    const badPerformances = [];
+
+    for (let classDoc of classSnapshot.docs) {
+      const classId = classDoc.id;
+
+      // Get all grading documents for this class
+      const gradingQuery = query(collection(db, 'grading'), where('classId', '==', classId));
+      const gradingSnapshot = await getDocs(gradingQuery);
+
+      let minScore = Infinity;
+      let badPerformance = null;
+
+      // Find the student with the lowest score
+      for (let gradingDoc of gradingSnapshot.docs) {
+        const gradingData = gradingDoc.data();
+        for (let grade of gradingData.grades) {
+          if (grade.score < minScore) {
+            minScore = grade.score;
+            badPerformance = {
+              classId: classId,
+              studentId: grade.studentId,
+              score: grade.score
+            };
+          }
+        }
+      }
+
+      if (badPerformance) {
+        badPerformances.push(badPerformance);
+      }
+    }
+
+    return response.status(200).json(badPerformances);
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+});
+
 export default router;
 
 
