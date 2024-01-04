@@ -234,7 +234,7 @@ router.delete("/:id/coursework/:courseworkId", async (request, response) => {
     const assessmentName = courseworkData.coursework[0].assessmentName;
 
     // Get all grading documents
-    const gradingSnapshot = await getDocs(collection(db, 'grading'));
+    const gradingSnapshot = await getDocs(collection(db, `class/${id.id}/grading`));
     gradingSnapshot.forEach(async (doc) => {
       const gradeData = doc.data();
       const gradeRef = doc.ref;
@@ -249,7 +249,7 @@ router.delete("/:id/coursework/:courseworkId", async (request, response) => {
     // Delete the coursework
     await deleteDoc(courseworkRef);
 
-    return response.status(200).send("successfully deleted");
+    return response.status(200).send({messages:"successfully deleted"});
   } catch (error) {
     return response.status(500).send(`ERROR !?   ${error}`);
   }
