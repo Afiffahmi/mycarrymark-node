@@ -234,7 +234,7 @@ router.delete("/:id/coursework/:courseworkId", async (request, response) => {
     const assessmentName = courseworkData.coursework[0].assessmentName;
 
     // Get all grading documents
-    const gradingSnapshot = await getDocs(collection(db, 'Grading'));
+    const gradingSnapshot = await getDocs(collection(db, 'grading'));
     gradingSnapshot.forEach(async (doc) => {
       const gradeData = doc.data();
       const gradeRef = doc.ref;
