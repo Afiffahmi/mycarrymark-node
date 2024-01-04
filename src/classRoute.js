@@ -219,6 +219,43 @@ router.get("/:id/coursework", async (request, response) => {
   }
 })
 
+//delete coursework partition
+router.delete("/:id/coursework/:courseworkId", async (request, response) => {
+  try {
+    const id = request.params;
+    const courseworkRef = doc(db, `class/${id.id}/coursework/${id.courseworkId}`);
+
+    // Get the coursework document
+    const courseworkDoc = await getDoc(courseworkRef);
+    if (!courseworkDoc.exists()) {
+      return response.status(404).send("Coursework not found");
+    }
+    const courseworkData = courseworkDoc.data();
+    const assessmentName = courseworkData.coursework[0].assessmentName;
+
+    // Get all grading documents
+    const gradingSnapshot = await getDocs(collection(db, 'Grading'));
+    gradingSnapshot.forEach(async (doc) => {
+      const gradeData = doc.data();
+      const gradeRef = doc.ref;
+
+      // Filter the grades array
+      const newGrades = gradeData.grades.filter(grade => grade.assessmentName !== assessmentName);
+
+      // Update the document with the filtered grades array
+      await updateDoc(gradeRef, { grades: newGrades });
+    });
+
+    // Delete the coursework
+    await deleteDoc(courseworkRef);
+
+    return response.status(200).send("successfully deleted");
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+});
+
+
 router.post("/:id/forum", async (request, response) => {
   try{
     const classId = request.params.id;
