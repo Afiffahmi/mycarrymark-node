@@ -110,6 +110,39 @@ router.get("/", async (request, response) => {
   }
 });
 
+router.post("/:id/profile", async (request, response) => {
+  try {
+    const profileData = request.body;
+    const profilesCollection = collection(db, 'profiles');
+    const docRef = await addDoc(profilesCollection, profileData);
+    const newProfile = {
+      id: docRef.id,
+      ...profileData
+    };
+    return response.status(201).send(newProfile);
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+});
+
+
+router.get("/:id/profile", async (request, response) => {
+  try {
+    const id = request.params.id;
+    const profileRef = doc(db, 'profiles', id);
+    const profileData = await getDoc(profileRef);
+    if (!profileData.exists()) {
+      return response.status(404).send("Profile not found");
+    }
+    const profile = {
+      id: profileRef.id,
+      ...profileData.data()
+    };
+    return response.status(200).send(profile);
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+});
 export default router;
 
 
