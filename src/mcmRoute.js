@@ -110,20 +110,26 @@ router.get("/", async (request, response) => {
   }
 });
 
-router.post("/:id/profile", async (request, response) => {
-  try {
-    const profileData = request.body;
-    const profilesCollection = collection(db, 'profiles');
-    const docRef = await addDoc(profilesCollection, profileData);
-    const newProfile = {
-      id: docRef.id,
-      ...profileData
-    };
-    return response.status(201).send(newProfile);
-  } catch (error) {
-    return response.status(500).send(`ERROR !?   ${error}`);
-  }
-});
+
+  router.post("/:id/profile", async (request, response) => {
+    try {
+      const profileData = request.body;
+      const id = request.params.id;
+      const profileRef = doc(db, 'profiles', id);
+  
+      await setDoc(profileRef, { ...profileData, email: id }, { merge: true });
+  
+      const updatedProfileData = await getDoc(profileRef);
+      const updatedProfile = {
+        id: profileRef.id,
+        ...updatedProfileData.data()
+      };
+  
+      return response.status(200).send(updatedProfile);
+    } catch (error) {
+      return response.status(500).send(`ERROR !?   ${error}`);
+    }
+  });
 
 
 router.get("/:id/profile", async (request, response) => {
