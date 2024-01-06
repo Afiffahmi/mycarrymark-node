@@ -185,7 +185,7 @@ router.delete("/:id/student/:studentId", async (request, response) => {
   }
     }
   
-    return response.status(200).send(studentRef);
+    return response.status(200).send(data.studentid);
     
   } catch (error) {
     return response.status(500).send(`ERROR !?   ${error}`);
