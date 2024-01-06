@@ -218,7 +218,7 @@ router.put("/:id/student/:studentId", async (request, response) => {
 //update class
 router.put("/update/:id", async (request, response) => {
   try {
-    if (!request.body.coursecode || !request.body.coursename || !request.body.part || !request.body.group) {
+    if (!request.body.courseCode || !request.body.courseName || !request.body.part || !request.body.groupClass) {
       return response.status(400).send({
         message: "send all the required field",
       });
@@ -227,9 +227,9 @@ router.put("/update/:id", async (request, response) => {
     const classRef = doc(db, "class", `${id.id}`);
 
     await updateDoc(classRef, {
-      courseCode: request.body.coursecode,
-      courseName: request.body.coursename,
-      groupClass: request.body.group,
+      courseCode: request.body.courseCode,
+      courseName: request.body.courseName,
+      groupClass: request.body.groupClass,
       part: request.body.part,
     });
 
