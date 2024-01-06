@@ -7,6 +7,7 @@ import {
   getDocs,
   updateDoc,
   deleteDoc,
+  setDoc
 } from "firebase/firestore";
 import {ref} from "firebase/storage";
 
