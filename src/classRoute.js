@@ -184,7 +184,7 @@ router.delete("/:id/student/:studentId", async (request, response) => {
     // Delete the student
     await deleteDoc(studentRef);
 
-    return response.status(200).send({messages:"successfully deleted"});
+    return response.status(200).send({messages:"successfully deleted", data: data});
   } catch (error) {
     return response.status(500).send(`ERROR !?   ${error}`);
   }
