@@ -166,6 +166,7 @@ router.delete("/:id/student/:studentId", async (request, response) => {
     const id = request.params;
     const studentRef = doc(db, `class/${id.id}/student/${id.studentId}`);
 
+    if(studentRef){
     // Remove related grading documents
     const gradingQuery = query(collection(db, 'grading'), where('studentId', '==', studentRef.studentid));
     const gradingSnapshot = await getDocs(gradingQuery);
@@ -176,8 +177,9 @@ router.delete("/:id/student/:studentId", async (request, response) => {
 
     // Delete the student
     await deleteDoc(studentRef);
-
     return response.status(200).send("successfully deleted");
+  }
+    
   } catch (error) {
     return response.status(500).send(`ERROR !?   ${error}`);
   }
