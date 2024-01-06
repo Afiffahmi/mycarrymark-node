@@ -158,6 +158,44 @@ router.get("/:id/student", async (request, response) => {
   }
 })
 
+//delete student
+router.delete("/:id/student/:studentId", async (request, response) => {
+  try {
+    const id = request.params;
+    const studentRef = doc(db, `class/${id.id}/student/${id.studentId}`);
+    await deleteDoc(studentRef);
+    return response.status(200).send("successfully deleted");
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+}
+);
+
+//update student
+router.put("/:id/student/:studentId", async (request, response) => {
+  try {
+    if (!request.body.email || !request.body.name || !request.body.username || !request.body.avatar) {
+      return response.status(400).send({
+        message: "send all the required field",
+      });
+    }
+    const id = request.params;
+    const studentRef = doc(db, `class/${id.id}/student/${id.studentId}`);
+
+    await updateDoc(studentRef, {
+      email: request.body.email,
+      name: request.body.name,
+      studentid: request.body.studentid,
+      avatar: request.body.avatar,
+      online: false,
+    });
+
+    return response.status(200).send("successfully updated");
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+});
+
 //update class
 router.put("/update/:id", async (request, response) => {
   try {
