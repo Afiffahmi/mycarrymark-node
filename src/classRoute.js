@@ -233,7 +233,7 @@ router.put("/update/:id", async (request, response) => {
       part: request.body.part,
     });
 
-    return response.status(200).send("successfully updated");
+    return response.status(200).send({messages: "successfully updated"});
   } catch (error) {
     return response.status(500).send(`ERROR !?   ${error}`);
   }
