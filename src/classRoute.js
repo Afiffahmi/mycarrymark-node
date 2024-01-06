@@ -177,11 +177,11 @@ router.delete("/:id/student/:studentId", async (request, response) => {
     const gradingSnapshot = await getDocs(gradingQuery);
     gradingSnapshot.forEach(async (doc) => {
       const gradeRef = doc.ref;
-      
+      //Delete the student
+    await deleteDoc(gradeRef);
     });
 
-    //Delete the student
-    await deleteDoc(gradeRef);
+    
   }
     }
   
