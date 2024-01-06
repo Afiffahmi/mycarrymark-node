@@ -174,7 +174,7 @@ router.delete("/:id/student/:studentId", async (request, response) => {
     const data = studentData.data();
 
     // Remove related grading documents
-    const gradingQuery = query(collection(db, 'grading'), where('studentId', '==', data.studentid));
+    const gradingQuery = query(collection(db, `class/${id.id}/grading`), where('studentId', '==', data.studentid));
     const gradingSnapshot = await getDocs(gradingQuery);
     gradingSnapshot.forEach(async (doc) => {
       const gradeRef = doc.ref;
