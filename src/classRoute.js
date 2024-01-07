@@ -11,7 +11,8 @@ import {
   getDoc,
   runTransaction,
   query,
-  where
+  where,
+  orderBy,
 } from "firebase/firestore";
 
 const app = express();
@@ -370,7 +371,7 @@ router.get("/:id/forum", async (request, response) => {
         ...doc.data(),
       };
 
-      const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
+      const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`).orderBy("timestamp", "asc"));
       let messages = [];
       messageSnapshot.docs.forEach(messageDoc => {
         messages.push({
