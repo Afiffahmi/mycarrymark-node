@@ -371,7 +371,7 @@ router.get("/:id/forum", async (request, response) => {
         ...doc.data(),
       };
 
-      const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`).orderBy("timestamp", "asc"));
+      const messageSnapshot = await getDocs(collection(db, `class/${classId}/forum/${forum.id}/messages`));
       let messages = [];
       messageSnapshot.docs.forEach(messageDoc => {
         messages.push({
