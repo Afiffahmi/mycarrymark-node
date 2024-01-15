@@ -104,6 +104,16 @@ router.get("/list", async (request, response) => {
         });
       });
 
+      const studentSnapshot = await getDocs(collection(db, `class/${doc.id}/student`));
+      let students = [];
+      studentSnapshot.forEach((stuDoc) => {
+        students.push({
+          id: stuDoc.id,
+          ...stuDoc.data(),
+        });
+      });
+
+      classData.students = students;
       classData.lecturers = lecturers;
       classlist.push(classData);
     }
