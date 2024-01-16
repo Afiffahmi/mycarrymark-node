@@ -761,7 +761,7 @@ router.get("/:id/grading/:studentId", async (request, response) => {
   }
 });
 
-//bad-performance-student
+
 //bad-performance-student
 router.get("/:id/bad-performance", async (request, response) => {
   try {
