@@ -185,7 +185,7 @@ router.get("/:id/studentprofile", async (request, response) => {
     const profileRef = doc(db, 'studentprofiles', id);
     const profileData = await getDoc(profileRef);
     if (!profileData.exists()) {
-      return response.status(404).send("Profile not found");
+      return response.status(500).send({messages:"Profile not found"});
     }
     const profile = {
       id: profileRef.id,
