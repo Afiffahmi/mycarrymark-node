@@ -15,7 +15,7 @@ import {
   setDoc,
   getDoc
 } from "firebase/firestore";
-import {storage} from './firebase.js'; 
+import {storage,db} from './firebase.js'; 
 import multer from "multer";
 import { getDownloadURL,uploadBytesResumable,ref, getStorage,listAll} from "firebase/storage";
 import path from "path";
