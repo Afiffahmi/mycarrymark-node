@@ -5,6 +5,16 @@ import {
   signInWithEmailAndPassword,
   updateProfile
 } from "firebase/auth";
+import {
+  doc,
+  addDoc,
+  collection,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+  getDoc
+} from "firebase/firestore";
 import {storage} from './firebase.js'; 
 import multer from "multer";
 import { getDownloadURL,uploadBytesResumable,ref, getStorage,listAll} from "firebase/storage";
