@@ -158,9 +158,9 @@ router.post("/:id/studentprofile",upload.single("filename") ,async (request, res
     const profileRef = doc(db, 'studentprofiles', id);
     const storageRef = ref(storage,`files/user/student/${id}/${request.file.originalname}`)
     const metadata = {
-      contentType : req.file.mimetype,
+      contentType : request.file.mimetype,
     };
-    const snapshot = await uploadBytesResumable(storageRef, req.file.buffer,metadata);
+    const snapshot = await uploadBytesResumable(storageRef, request.file.buffer,metadata);
     const downloadURL = await getDownloadURL(snapshot.ref);
 
     await setDoc(profileRef, { ...profileData, email: id }, { merge: true });
