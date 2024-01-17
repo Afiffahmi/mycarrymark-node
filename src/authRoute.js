@@ -165,14 +165,15 @@ router.post("/:id/studentprofile",upload.single("filename") ,async (request, res
 
     await setDoc(profileRef, { ...profileData, email: id }, { merge: true });
 
-    const updatedProfileData = await getDoc(profileRef);
-    const updatedProfile = {
-      avatar: downloadURL,
-      online: true,
-      id: profileRef.id,
-      ...updatedProfileData.data()
-    };
 
+// Update the document with the avatar and online status
+await updateDoc(profileRef, { avatar: downloadURL, online: true });
+
+const updatedProfileData = await getDoc(profileRef);
+const updatedProfile = {
+  id: profileRef.id,
+  ...updatedProfileData.data()
+};
     return response.status(200).send(updatedProfile);
   } catch (error) {
     return response.status(500).send(`ERROR !?   ${error}`);
