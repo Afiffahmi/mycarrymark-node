@@ -169,7 +169,23 @@ router.post("/:id/studentprofile",upload.single("filename") ,async (request, res
   }
 });
 
-
+router.get("/:id/studentprofile", async (request, response) => {
+  try {
+    const id = request.params.id;
+    const profileRef = doc(db, 'studentprofiles', id);
+    const profileData = await getDoc(profileRef);
+    if (!profileData.exists()) {
+      return response.status(404).send("Profile not found");
+    }
+    const profile = {
+      id: profileRef.id,
+      ...profileData.data()
+    };
+    return response.status(200).send(profile);
+  } catch (error) {
+    return response.status(500).send(`ERROR !?   ${error}`);
+  }
+});
 
 
 
