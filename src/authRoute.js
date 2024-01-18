@@ -151,34 +151,41 @@ router.get("/:id/files", async (request, response) => {
   }
 });
 
-router.post("/:id/studentprofile",upload.single("filename") ,async (request, response) => {
+router.post("/:id/studentprofile", upload.single("filename"), async (request, response) => {
   try {
     const profileData = request.body;
     const id = request.params.id;
     const profileRef = doc(db, 'studentprofiles', id);
-    const storageRef = ref(storage,`files/user/student/${id}/${request.file.originalname}`)
-    const metadata = {
-      contentType : request.file.mimetype,
-    };
-    const snapshot = await uploadBytesResumable(storageRef, request.file.buffer,metadata);
-    const downloadURL = await getDownloadURL(snapshot.ref);
 
+    // Check if an image is included in the request
+    if (request.file) {
+      const storageRef = ref(storage, `files/user/student/${id}/${request.file.originalname}`);
+      const metadata = {
+        contentType: request.file.mimetype,
+      };
+      const snapshot = await uploadBytesResumable(storageRef, request.file.buffer, metadata);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+
+      // Update the document with the avatar and online status
+      await updateDoc(profileRef, { avatar: downloadURL, online: true });
+    }
+
+    // Update the document with other profile data
     await setDoc(profileRef, { ...profileData, email: id }, { merge: true });
 
+    // Fetch the updated profile data
+    const updatedProfileData = await getDoc(profileRef);
+    const updatedProfile = {
+      id: profileRef.id,
+      ...updatedProfileData.data()
+    };
 
-// Update the document with the avatar and online status
-await updateDoc(profileRef, { avatar: downloadURL, online: true });
-
-const updatedProfileData = await getDoc(profileRef);
-const updatedProfile = {
-  id: profileRef.id,
-  ...updatedProfileData.data()
-};
     return response.status(200).send(updatedProfile);
   } catch (error) {
     return response.status(500).send(`ERROR !?   ${error}`);
   }
 });
+
 
 router.get("/:id/studentprofile", async (request, response) => {
   try {
