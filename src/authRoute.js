@@ -153,10 +153,14 @@ router.get("/:id/files", async (request, response) => {
 
 router.post("/:id/studentprofile",upload.single("filename") ,async (request, response) => {
   try {
+    if (!request.file) {
+      // Handle the case where no file was included in the request
+      return response.status(400).send("No file included in the request");
+    }
     const profileData = request.body;
     const id = request.params.id;
     const profileRef = doc(db, 'studentprofiles', id);
-    const storageRef = ref(storage,`files/user/student/${id}/${request.file.originalname}`)
+    const storageRef = ref(storage,`files/user/student/${id}/${request.file.fileName}`)
     const metadata = {
       contentType : request.file.mimetype,
     };
