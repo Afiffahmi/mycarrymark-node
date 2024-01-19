@@ -987,6 +987,44 @@ router.get("/bad-performance", async (request, response) => {
   }
 });
 
+router.post("/:shortId/join", async (request, response) => {
+  try {
+    const shortId = request.params.shortId;
+    const { studentId, email, name } = request.body;
+
+    if (!shortId || !studentId || !email || !name) {
+      return response.status(400).send("Missing required data");
+    }
+
+    const classSnapshot = await getDocs(collection(db, 'class'));
+    let classData = null;
+    let classDocId = null;
+
+    // Find the class with the given shortId
+    for (let classDoc of classSnapshot.docs) {
+      if (classDoc.id.slice(0, 5) === shortId) {
+        classData = classDoc.data();
+        classDocId = classDoc.id;
+        break;
+      }
+    }
+
+    if (!classData) {
+      return response.status(404).send("Class not found");
+    }
+
+    // Get a reference to the 'students' subcollection of the class
+    const studentsRef = collection(db, 'class', classDocId, 'students');
+
+    // Add the new student to the 'students' subcollection
+    await addDoc(studentsRef, { studentid:studentId,email: email, name:name });
+
+    response.status(200).send("Student successfully added to class");
+  } catch (error) {
+    response.status(500).send(`Error joining class: ${error}`);
+  }
+});
+
 export default router;
 
 
