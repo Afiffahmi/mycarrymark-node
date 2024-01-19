@@ -993,7 +993,7 @@ router.post("/:shortId/join", async (request, response) => {
     const { studentId, email, name } = request.body;
 
     if (!shortId || !studentId || !email || !name) {
-      return response.status(400).send("Missing required data");
+      return response.status(200).send({messages:"Missing required data"});
     }
 
     const classSnapshot = await getDocs(collection(db, 'class'));
@@ -1010,18 +1010,18 @@ router.post("/:shortId/join", async (request, response) => {
     }
 
     if (!classData) {
-      return response.status(404).send("Class not found");
+      return response.status(200).send({message: "Class not found"});
     }
 
     // Get a reference to the 'students' subcollection of the class
-    const studentsRef = collection(db, 'class', classDocId, 'students');
+    const studentsRef = collection(db, 'class', classDocId, 'student');
 
     // Add the new student to the 'students' subcollection
     await addDoc(studentsRef, { studentid:studentId,email: email, name:name });
 
     response.status(200).send("Student successfully added to class");
   } catch (error) {
-    response.status(500).send(`Error joining class: ${error}`);
+    response.status(500).send({message:`Error joining class: ${error}`});
   }
 });
 
