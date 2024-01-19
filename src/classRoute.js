@@ -1016,6 +1016,12 @@ router.post("/:shortId/join", async (request, response) => {
     // Get a reference to the 'students' subcollection of the class
     const studentsRef = collection(db, 'class', classDocId, 'student');
 
+    // Check if the student has already joined the class
+    const studentSnapshot = await getDocs(query(studentsRef, where('studentid', '==', studentId)));
+    if (!studentSnapshot.empty) {
+      return response.status(200).send({message: "Student has already joined the class"});
+    }
+
     // Add the new student to the 'students' subcollection
     await addDoc(studentsRef, { studentid:studentId,email: email, name:name });
 
