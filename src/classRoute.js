@@ -1025,7 +1025,7 @@ router.post("/:shortId/join", async (request, response) => {
     // Add the new student to the 'students' subcollection
     await addDoc(studentsRef, { studentid:studentId,email: email, name:name });
 
-    response.status(200).send("Student successfully added to class");
+    response.status(200).send({message: "Student successfully added to class"});
   } catch (error) {
     response.status(500).send({message:`Error joining class: ${error}`});
   }
