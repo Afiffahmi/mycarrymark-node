@@ -993,7 +993,7 @@ router.post("/:shortId/join", async (request, response) => {
     const { studentId, email, name } = request.body;
 
     if (!shortId || !studentId || !email || !name) {
-      return response.status(200).send({messages:"Missing required data"});
+      return response.status(200).send({message:"Missing required data, please check your profile"});
     }
 
     const classSnapshot = await getDocs(collection(db, 'class'));
